@@ -1,0 +1,16 @@
+date: September 28, 2016
+meeting type: group
+attendance: [<jrhoeber>, <komlanaz>, <fgpinnoc>]  
+excused_absences:[<josephpu>] #Sick 
+task_progress:[ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: Set up local Django site},
+  {ubit: <josephpu>, progress: Started working on auth},
+  {ubit: <fgpinnoc>, progress: Setting up Django local host},
+  {ubit: <komlanaz>, progress: working on CSS}
+  ]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+    Discussed current status of project and plan moving forward
+    Discussed Sprint 2 objectives 
+    Discussed community points

@@ -1,0 +1,19 @@
+date: September 24, 2016
+meeting_type: group # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <komlanaz>, <fgpinnoc>, <jrhoeber>]
+absent: []
+excused_absences: [
+  ]
+task_progress: [
+  {ubit: <jrhoeber>, progress: Figured out application configuration for basic DB/local dev servers},
+  {ubit: <josephpu>, progress: Discussed shibboleth w/ jesse, began potential auth code},
+  {ubit: <komlanaz>, progress: None},
+  {ubit: <fgpinnoc>, progress: None}
+  ]
+issues: [
+  ]
+Notes:  |
+    Worked on django configuration
+    Moving ahead with django auth
+    moving ahead with CSS and styling with UB visual guides
+    Moving ahead with DB setup

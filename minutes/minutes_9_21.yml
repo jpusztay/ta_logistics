@@ -1,0 +1,18 @@
+
+date: September 21, 2016
+meeting type: ta 
+attendance: [<josephpu>, <jrhoeber>] 
+absent: [<komlanaz>, <fgpinnoc>] 
+excused_absences:[ # Any legitamite excuses for absent team members ] 
+task_progress:[ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: Discussed shibolleth with Jesse},
+  {ubit: <josephpu>, progress: Began setting up meetings with Dr. Alphonce},
+  {ubit: <fgpinnoc>, progress: worked on login page and professor page},
+  {ubit: <komlanaz>, progress: worked on login page, learned html and css}
+  ]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  Discussed the setup of the Django server, as well as how to do authentication.
+  Assigned tasks to all four people
+
