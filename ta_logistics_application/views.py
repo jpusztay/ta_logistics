@@ -36,3 +36,7 @@ def edit_student_profile(request):
 def student_profile(request):
     template = loader.get_template('ta_logistics_application/student/profile.html')
     return HttpResponse(template.render())
+
+def create_student_account(request):
+    template = loader.get_template('ta_logistics_application/student/create_account.html')
+    return HttpResponse(template.render())
