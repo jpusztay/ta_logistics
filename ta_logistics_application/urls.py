@@ -1,9 +1,9 @@
 from django.conf.urls import url
 from . import views
 
-app_name = 'ta_logic'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-   # url(r'^$', views.index, name='application'),
-    url(r'^submit/$', views.submit, name='submit')
+    url(r'^submit/$', views.submit, name='submit'),
+    url(r'^student/profile/$', views.student_profile, name='student_profile'),
+    url(r'^student/profile/edit$', views.edit_student_profile, name='edit_student_profile'),
 ]
