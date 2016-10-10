@@ -1,24 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'ta_logistics_application/base.html' %}
 
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>Apply For Job</h2>
+            <h2>Edit Information</h2>
         </div>
 
         <div class="footnotes">
 
-            <form>
-                <div class="form-group">
-                    <label for="exampleSelect1">Select Position</label>
-                    <select class="form-control" id="exampleSelect1">
-                        <option>CSE 115 UTA</option>
-                        <option>CSE 116 UTA</option>
-                        <option>CSE 250 UTA</option>
-                        <option>CSE 331 UTA</option>
-                        <option>CSE 442 UTA</option>
-                    </select>
-                </div>
+            <form method="post" action ="" enctype="multipart/form-data">
 
                 <div class="form-group">
                     <label for="first-name-field">First Name</label>
@@ -55,32 +45,16 @@
                         <option>&lt; 3.0</option>
                     </select>
                 </div>
-
-                <div class="form-group">
-                    <label for="GradeSelect">Grade in class applying for</label>
-                    <select class="form-control" id="GradeSelect">
-                        <option>A</option>
-                        <option>A-</option>
-                        <option>B+</option>
-                        <option>B</option>
-                        <option>B-</option>
-                        <option>< B-</option>
-
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="explainationArea">Briefly explain why you would like this position</label>
-                    <textarea class="form-control" id="explainationArea" rows="3"></textarea>
-                </div>
                 <div class="form-group">
                     <label for="exampleInputFile">Resume</label>
-                    <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
+                    {% csrf_token %}
+                    {{ form.as_p }}
                     <small id="fileHelp" class="form-text text-muted">Please enter a PDF or a docx file</small>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
 
-        </div> <!-- /container -->
+        </div>
     </div>
 {% endblock %}
 

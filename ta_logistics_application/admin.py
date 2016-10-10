@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import Application, OpenClass
+from .models import Students, Classes, Professors, ApplicationParameters, Resume
 
-#class ApplicationAdmin(admin.ModelAdmin):
-    #model = Application
+class ApplicationParametersAdmin(admin.ModelAdmin):
+    model = ApplicationParameters
 
-#class OpenClassAdmin(admin.ModelAdmin):
-    #model = OpenClass
+class ProfessorsAdmin(admin.ModelAdmin):
+    model = Professors
 
-admin.site.register(OpenClass)
-admin.site.register(Application)
+admin.site.register(ApplicationParameters)
+admin.site.register(Professors)
