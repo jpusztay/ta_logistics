@@ -16,7 +16,8 @@ def submit(request):
         if form.is_valid():
             # file is saved
             form.save()
-            return HttpResponse('Your resume has been uploaded successfully.')
+            template = loader.get_template('ta_logistics_application/submission_received.html')
+            return HttpResponse(template.render())
     else:
         form = ResumeForm()
-    return render(request, 'ta_logistics_application/submit.html', {'form': form})
+    return render(request, 'ta_logistics_application/application.html', {'form': form})

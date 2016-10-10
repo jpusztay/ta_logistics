@@ -8,7 +8,7 @@
 
         <div class="footnotes">
 
-            <form>
+            <form method="post" action ="" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="exampleSelect1">Select Position</label>
                     <select class="form-control" id="exampleSelect1">
@@ -74,13 +74,14 @@
                 </div>
                 <div class="form-group">
                     <label for="exampleInputFile">Resume</label>
-                    <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
+                    {% csrf_token %}
+                    {{ form.as_p }}
                     <small id="fileHelp" class="form-text text-muted">Please enter a PDF or a docx file</small>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
 
-        </div> <!-- /container -->
+        </div>
     </div>
 {% endblock %}
 
