@@ -5,7 +5,7 @@ import datetime
 from django.utils import timezone
 
 
-class Application(models.Model):
+class Students(models.Model):
     applying_class = models.CharField(max_length=6)
     ubit_name = models.CharField(max_length=10)
     first_name = models.CharField(max_length=30)

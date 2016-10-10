@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.template import loader
 
-from .forms import ResumeForm
+from ta_logistics_application.forms import ResumeForm
 
 def index(request):
     template = loader.get_template('ta_logistics_application/index.html')
