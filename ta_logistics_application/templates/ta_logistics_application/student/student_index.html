@@ -8,8 +8,7 @@
         </div>
         <div>
             <h3>Login</h3>
-            <form method="post" action ="" enctype="multipart/form-data">
-                {% csrf_token %}
+            <form>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Username</label>
                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
@@ -19,9 +18,6 @@
                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter password">
                 </div>
                 <button type="button" class="btn btn-primary">Login</button>
-                <div style="padding-top: 5%">
-                    <p>If you'd like to create an account, click <a href="{% url 'create_student_account' %}">here</a></p>
-                </div>
             </form>
         </div>
     </div>
