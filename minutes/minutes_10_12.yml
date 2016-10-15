@@ -1,0 +1,19 @@
+date: October 12, 2016
+meeting_type: group # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <jrhoeber>, <komlanaz>, <fgpinnoc>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <josephpu>, progress: None},
+  {ubit: <jrhoeber>, progress: worked on db redesign},
+  {ubit: <fgpinnoc>, progress: None},
+  {ubit: <komlanaz>, progress: None}
+  ]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: SSL Cert.... },
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  Discussed DB redesign and necessary design decisions that will effect the application
+  Set up sprint 3 issues
+  discussed sprint 3; we need to have it fully functioning so we can implement extra features and tests in sprint 4
