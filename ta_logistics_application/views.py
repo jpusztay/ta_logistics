@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.template import loader
 from django.shortcuts import redirect
-from ta_logistics_application.models import Classes, ApplicationFields
+from ta_logistics_application.models import Classes, ApplicationFields, DataDefinitions
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm
 
 
@@ -16,20 +16,18 @@ def index(request):
 ################ Student Context ################
 
 # Finish when student index is finished
-# Figure out how to include c_id & s_id with request
+# Get s_id and c_id parts working
 def application(request):#, c_id, s_id):
+    c_id = 6
+    s_id = 1
     if request.method == 'POST':
-        print(request.POST)
-        form = ApplicationForm(request.POST, request.FILES)
+        form = ApplicationForm(request.POST, class_id=c_id, student_id=s_id)
         if form.is_valid():
-            # file is saved
             form.save()
             template = loader.get_template('ta_logistics_application/student/submission_received.html')
             return HttpResponse(template.render())
-    else:
-        c_id = 6
-        s_id = 1
-        form = ApplicationForm(class_id=c_id, student_id=s_id)
+
+    form = ApplicationForm(class_id=c_id, student_id=s_id)
     return render(request, 'ta_logistics_application/student/application.html', {'form': form})
 
 

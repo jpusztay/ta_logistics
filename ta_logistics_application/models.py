@@ -6,7 +6,7 @@ from django.utils import timezone
 from ta_logistics_application.validators import validate_optional_field_json
 
 
-class DataDefinitions:
+class DataDefinitions():
     GPA_CHOICES = (
         (4.0, '4.0'),
         (3.9, '3.9'),
@@ -21,17 +21,16 @@ class DataDefinitions:
         (3.0, '3.0'),
         (-1, '< 3.0'),
     )
-
     GRADE_CHOICES = (
-        ('A', 'A'),
-        ('A-', 'A-'),
-        ('B+', 'B+'),
-        ('B', 'B'),
-        ('B-', 'B-'),
-        ('C+', 'C+'),
-        ('C', 'C'),
-        ('C-', 'C-'),
-        ('> C-', '> C-'),
+        ('A','A'),
+        ('A-','A-'),
+        ('B+','B+'),
+        ('B','B'),
+        ('B-','B-'),
+        ('C+','C+'),
+        ('C','C'),
+        ('C-','C-'),
+        ('< C-','< C-'),
     )
     FIELD_TYPE_CHOICES = (
         ('TEXT', 'Text String'),
@@ -65,6 +64,8 @@ class DataDefinitions:
         for i in ApplicationFields.objects.filter(is_default=False):
             ret.append((i.id, i.field_text))
         return tuple(ret)
+
+
 
 
 class Students(models.Model):

@@ -1,6 +1,9 @@
+import json
 from django import forms
 from .models import Students, Classes, ApplicationFields, ClassApplicants, DataDefinitions
 
+
+OPT_DATA_STR = 'optional_data'
 
 ################ Student Context ################
 
@@ -32,51 +35,58 @@ class UploadFileForm(forms.Form):
 
 
 class ApplicationForm(forms.Form):
-    class Meta:
-        data_defs = DataDefinitions()
-        model = ClassApplicants
-        fields = ['class_id', 'student_id', 'application_status_id', 'hiring_status_id', 'optional_fields',
-                  'personal_statement', 'class_grade']
-        widgets = {
-            'class_id': forms.HiddenInput(),
-            'student_id': forms.HiddenInput(),
-            'application_status_id': forms.HiddenInput(),
-            'hiring_status_id': forms.HiddenInput(),
-            'optional_fields': forms.HiddenInput(),
-            'class_grade': forms.Select(choices=data_defs.GRADE_CHOICES, attrs={'placeholder': 'Select Grade You Recieved in Applying Class'}),
-            'personal_statement': forms.Textarea(attrs={'placeholder': 'Enter a Brief Summary of Why You Want The Position'}),
-
-        }
-        labels = {
-
-        }
-
     def __init__(self, *args, **kwargs):
         data_defs = DataDefinitions()
         self.class_id = kwargs.pop('class_id')
         self.student_id = kwargs.pop('student_id')
-        self.application_status_id = 0
-        self.hiring_status_id = 0
-        optional_field_ids = map(int, Classes.objects.filter(id=self.class_id)['selected_optional_field_ids'].split())
-        all_fields = ApplicationFields.objects.all()
-        for f_id in optional_field_ids:
-            field = ApplicationFields.objects.filter(id=f_id)
-            data_type = field['data_type']
-            if data_type == data_defs.INT_FIELD:
-                self.fields[field['field_name']] = forms.NumberInput(label=field['field_text'])
-            elif data_type == data_defs.FLOAT_FIELD:
-                self.fields[field['field_name']] = forms.FloatField(label=field['field_text'])
-            elif data_type == data_defs.TEXT_FIELD:
-                self.fields[field['field_name']] = forms.TextInput(label=field['field_text'])
-            elif data_type == data_defs.COMFORT_LVL_FIELD:
-                self.fields[field['field_name']] = forms.ChoiceField(choices=data_defs.COMFORT_LVLS)
         super(ApplicationForm, self).__init__(*args, **kwargs)
 
-    def is_valid(self):
-        return True
+        self.application_status_id = 0
+        self.hiring_status_id = 0
+        self.field_text_list = {}
+        # MAYBE LATER: Add student data fields as un-editable fields with student info
+        #student = Students.objects.get(id=self.student_id)
+        self.fields['class_grade'] = forms.ChoiceField(choices=data_defs.GRADE_CHOICES)
+        self.fields['personal_statement'] = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter a Brief Summary of Why You Want The Position'}))
+        self.optional_field_ids = map(int, Classes.objects.get(id=self.class_id).selected_optional_field_ids.split(","))
+        for f_id in self.optional_field_ids:
+            new_field = ApplicationFields.objects.get(id=f_id)
+            data_type = new_field.data_type
+            self.field_text_list[new_field.field_name] = data_type
+            if data_type == data_defs.INT_FIELD:
+                self.fields[new_field.field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder': new_field.field_text}))
+                self.fields[new_field.field_name].label = new_field.field_text
+            elif data_type == data_defs.FLOAT_FIELD:
+                self.fields[new_field.field_name] = forms.FloatField(label=new_field.field_text)
+            elif data_type == data_defs.TEXT_FIELD:
+                self.fields[new_field.field_name] = forms.TextInput(attrs={'placeholder': new_field.field_text})
+                self.fields[new_field.field_name].label = new_field.field_text
+            elif data_type == data_defs.COMFORT_LVL_FIELD:
+                self.fields[new_field.field_name] = forms.ChoiceField(choices=data_defs.COMFORT_LVLS)
+                self.fields[new_field.field_name].label = new_field.field_text
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
 
     def save(self):
-        return
+        data = self.cleaned_data
+        optional_data = {}
+        optional_data[OPT_DATA_STR] = {}
+        for key, value in self.field_text_list.items():
+            optional_data[OPT_DATA_STR][key] = data[key]
+        option_fields_json = json.dumps(optional_data)
+        application = ClassApplicants(
+            class_id=self.class_id,
+            student_id=self.student_id,
+            application_status_id=self.application_status_id,
+            hiring_status_id=self.hiring_status_id,
+            personal_statement=data['personal_statement'],
+            class_grade=data['class_grade'],
+            optional_fields=option_fields_json,
+        )
+        application.save()
+        print("Save")
 
 
 ################ Professor Context ################
