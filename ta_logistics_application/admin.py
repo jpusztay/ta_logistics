@@ -1,14 +1,14 @@
 from django.contrib import admin
-from .models import Students, Classes, Professors, ApplicationFields, ClassApplicants, StatusText
+from .models import Students, Courses, Professors, ApplicationFields, CourseApplicants, StatusText
 
 class StudentsAdmin(admin.ModelAdmin):
     model = Students
 
-class ClassesAdmin(admin.ModelAdmin):
-    model = Classes
+class CoursesAdmin(admin.ModelAdmin):
+    model = Courses
 
-class ClassApplicantsAdmin(admin.ModelAdmin):
-    model = ClassApplicants
+class CourseApplicantsAdmin(admin.ModelAdmin):
+    model = CourseApplicants
 
 class ApplicationFieldsAdmin(admin.ModelAdmin):
     model = ApplicationFields
@@ -22,6 +22,6 @@ class ProfessorsAdmin(admin.ModelAdmin):
 admin.site.register(ApplicationFields)
 admin.site.register(Professors)
 admin.site.register(Students)
-admin.site.register(Classes)
-admin.site.register(ClassApplicants)
+admin.site.register(Courses)
+admin.site.register(CourseApplicants)
 admin.site.register(StatusText)

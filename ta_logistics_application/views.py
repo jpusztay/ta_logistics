@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView
 from django.template import loader
 from django.shortcuts import redirect
-from ta_logistics_application.models import Classes, ApplicationFields, DataDefinitions
-from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm
+from datetime import date
+from ta_logistics_application.models import Courses, CourseApplicants, DataDefinitions, ApplicationFields
+from ta_logistics_application.forms import StudentProfileForm, CreateCourseForm, OptionalFieldsForm, ApplicationForm
 
 
 def index(request):
@@ -15,19 +14,26 @@ def index(request):
 
 ################ Student Context ################
 
+def available_courses(request):
+    current_course_list = Courses.objects.filter(is_active=True)
+    context = {'current_course_list':current_course_list}
+    template = loader.get_template('ta_logistics_application/professor/professor_index.html')
+    return render(request, 'ta_logistics_application/professor/professor_index.html', context)
+
+
 # Finish when student index is finished
 # Get s_id and c_id parts working
 def application(request):#, c_id, s_id):
     c_id = 6
     s_id = 1
     if request.method == 'POST':
-        form = ApplicationForm(request.POST, class_id=c_id, student_id=s_id)
+        form = ApplicationForm(request.POST, course_id=c_id, student_id=s_id)
         if form.is_valid():
             form.save()
             template = loader.get_template('ta_logistics_application/student/submission_received.html')
             return HttpResponse(template.render())
 
-    form = ApplicationForm(class_id=c_id, student_id=s_id)
+    form = ApplicationForm(course_id=c_id, student_id=s_id)
     return render(request, 'ta_logistics_application/student/application.html', {'form': form})
 
 
@@ -67,20 +73,36 @@ def create_student_account(request):
 
 def professor_index(request):
     p_id = 1
-    current_class_list = Classes.objects.filter(professor_id=p_id, active_semester='FA16')
-    context = {'current_class_list':current_class_list}
+    current_course_list = Courses.objects.filter(professor_id=p_id, is_active=True)
+    context = {'current_course_list':current_course_list}
     template = loader.get_template('ta_logistics_application/professor/professor_index.html')
     return render(request, 'ta_logistics_application/professor/professor_index.html', context)
 
+def professor_course_applicants(request):
+    data_defs = DataDefinitions()
+    course_id = request.GET.urlencode().split('=')[-1]
+    fields = []
+    student_data = data_defs.getStudentDataForApplicantsView(fields=fields, course_id=course_id)
+    #header_dict = data_defs.getAllFieldsDictionary()
+    #field_text = [header_dict[x] for x in fields]
+    course_applicant_data = {}
 
-def professor_create_class(request):
+    #context = {
+     #   'course_applicants': course_applicants,
+     #   'field_names': field_names,
+     #   'column_headers': field_text,
+    #}
+    #return render(request, 'ta_logistics_application/professor/professor_index.html', context)
+
+
+def professor_create_course(request):
     if request.method == 'POST':
         selected_optionals = request.POST.getlist("select_optional_fields")
         # Hacky solution, possible rework in the future
         request.POST['selected_optional_field_ids'] = ','.join(map(str,selected_optionals))
         # Replace this with ID of professor that is signed in
         request.POST['professor_id'] = 1
-        form = CreateClassForm(request.POST)
+        form = CreateCourseForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect(professor_index)
@@ -89,7 +111,7 @@ def professor_create_class(request):
             return redirect(professor_index)
 
     context = {
-        'form': CreateClassForm(),
+        'form': CreateCourseForm(),
         'optional_fields': OptionalFieldsForm()
     }
-    return render(request, 'ta_logistics_application/professor/create_class.html', context)
+    return render(request, 'ta_logistics_application/professor/create_course.html', context)

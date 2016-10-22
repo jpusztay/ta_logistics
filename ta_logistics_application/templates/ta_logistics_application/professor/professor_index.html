@@ -3,32 +3,32 @@
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>Current Classes</h2>
+            <h2>Current Courses</h2>
         </div>
         <div>
-            {% if current_class_list %}
+            {% if current_course_list %}
                 <table class = 'table'>
                     <thead>
                         <tr>
-                            <th>Class ID</th>
-                            <th>Class Name</th>
+                            <th>Course ID</th>
+                            <th>Course Name</th>
                             <th>Number of applicants</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for class in current_class_list %}
+                    {% for course in current_course_list %}
                         <tr>
-                            <td>{{ class.class_listing_id }}</td>
-                            <td>{{ class.class_name }}</td>
+                            <td><a href="{% url 'professor_course_applicants'%}?course_id={{ course.id }}">{{ course.course_listing_id }}</a></td>
+                            <td>{{ course.course_name }}</td>
                             <td></td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
             {% else %}
-                <p>No classes yet</p>
+                <p>No courses yet</p>
             {% endif %}
-            <a href="{% url 'professor_create_class' %}" class="btn btn-primary">Create New Class</a>
+            <a href="{% url 'professor_create_course' %}" class="btn btn-primary">Create New Course</a>
         </div>
     </div>
 {% endblock %}

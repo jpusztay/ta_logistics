@@ -1,6 +1,6 @@
 import json
 from django import forms
-from .models import Students, Classes, ApplicationFields, ClassApplicants, DataDefinitions
+from .models import Students, Courses, ApplicationFields, CourseApplicants, DataDefinitions
 
 
 OPT_DATA_STR = 'optional_data'
@@ -37,7 +37,7 @@ class UploadFileForm(forms.Form):
 class ApplicationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         data_defs = DataDefinitions()
-        self.class_id = kwargs.pop('class_id')
+        self.course_id = kwargs.pop('course_id')
         self.student_id = kwargs.pop('student_id')
         super(ApplicationForm, self).__init__(*args, **kwargs)
 
@@ -46,9 +46,9 @@ class ApplicationForm(forms.Form):
         self.field_text_list = {}
         # MAYBE LATER: Add student data fields as un-editable fields with student info
         #student = Students.objects.get(id=self.student_id)
-        self.fields['class_grade'] = forms.ChoiceField(choices=data_defs.GRADE_CHOICES)
+        self.fields['course_grade'] = forms.ChoiceField(choices=data_defs.GRADE_CHOICES)
         self.fields['personal_statement'] = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter a Brief Summary of Why You Want The Position'}))
-        self.optional_field_ids = map(int, Classes.objects.get(id=self.class_id).selected_optional_field_ids.split(","))
+        self.optional_field_ids = map(int, Courses.objects.get(id=self.course_id).selected_optional_field_ids.split(","))
         for f_id in self.optional_field_ids:
             new_field = ApplicationFields.objects.get(id=f_id)
             data_type = new_field.data_type
@@ -76,13 +76,13 @@ class ApplicationForm(forms.Form):
         for key, value in self.field_text_list.items():
             optional_data[OPT_DATA_STR][key] = data[key]
         option_fields_json = json.dumps(optional_data)
-        application = ClassApplicants(
-            class_id=self.class_id,
+        application = CourseApplicants(
+            course_id=self.course_id,
             student_id=self.student_id,
             application_status_id=self.application_status_id,
             hiring_status_id=self.hiring_status_id,
             personal_statement=data['personal_statement'],
-            class_grade=data['class_grade'],
+            course_grade=data['course_grade'],
             optional_fields=option_fields_json,
         )
         application.save()
@@ -92,30 +92,30 @@ class ApplicationForm(forms.Form):
 ################ Professor Context ################
 
 
-class CreateClassForm(forms.ModelForm):
+class CreateCourseForm(forms.ModelForm):
     class Meta:
         data_defs = DataDefinitions()
-        model = Classes
-        fields = ['professor_id','class_listing_id', 'active_semester', 'class_name', 'available_hours',
+        model = Courses
+        fields = ['professor_id','course_listing_id', 'active_semester', 'course_name', 'available_hours',
                   'selected_optional_field_ids']
         widgets = {
             'professor_id': forms.HiddenInput(),
-            'class_listing_id': forms.TextInput(attrs={'placeholder': 'e.g. CSE331'}),
+            'course_listing_id': forms.TextInput(attrs={'placeholder': 'e.g. CSE331'}),
             'active_semester': forms.Select(choices=data_defs.getActiveSemesters(), attrs={'placeholder': 'Select Active Semester'}),
-            'class_name': forms.TextInput(attrs={'placeholder': 'e.g. Introduction to Algorithm Analysis and Design'}),
+            'course_name': forms.TextInput(attrs={'placeholder': 'e.g. Introduction to Algorithm Analysis and Design'}),
             'available_hours': forms.NumberInput(attrs={'placeholder': 'Estimate If You Don\'t Know Yet'}),
             'selected_optional_field_ids': forms.HiddenInput(),
         }
         labels = {
-            'class_listing_id': 'Class ID',
+            'course_listing_id': 'Course ID',
             'active_semester': 'Active Semester',
-            'class_name': 'Class Title',
+            'course_name': 'Course Title',
             'available_hours': 'Hours Available in Budget',
         }
 
 
     def __init__(self, *args, **kwargs):
-        super(CreateClassForm, self).__init__(*args, **kwargs)
+        super(CreateCourseForm, self).__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'

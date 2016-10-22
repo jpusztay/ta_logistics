@@ -65,6 +65,20 @@ class DataDefinitions():
             ret.append((i.id, i.field_text))
         return tuple(ret)
 
+    def getAllFieldsDictionary(self):
+        ret = {}
+        for i in ApplicationFields.objects.filter(is_default=False):
+            ret.append((i.field_name, i.field_text))
+        return ret
+
+    def getStudentDataForApplicantsView(self, fields, course_id):
+        fields_from_student = ['first_name', 'last_name', 'ubit_name', 'gpa', 'resume']
+        fields_from_applicants = ['student_id', 'hiring_status_id', 'date_submitted', 'course_grade', 'optional_fields']
+        applicants = CourseApplicants.objects.filter(course_id=course_id).select_related()
+        print(applicants.values())
+        #student_data =
+        optional_field_ids = map(int, Courses.objects.get(course_id=course_id).selected_optional_field_ids.split(','))
+
 
 
 
@@ -78,27 +92,31 @@ class Students(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     teaching_experience = models.CharField(max_length=400, default="")
 
-class Classes(models.Model):
+class Courses(models.Model):
     #Professor ID: Linked to auto incremented ID of professor table
     professor_id = models.IntegerField()
     active_semester = models.CharField(max_length=4)
     # This would hold 'CSE442' or what ever
-    class_listing_id = models.CharField(max_length=6)
-    class_name = models.CharField(max_length=50)
+    course_listing_id = models.CharField(max_length=6)
+    course_name = models.CharField(max_length=50)
     available_hours = models.IntegerField()
     is_active = models.BooleanField(default=False)
     selected_optional_field_ids = models.CharField(max_length = 200, validators=[validate_comma_separated_integer_list], null=True)
 
-class ClassApplicants(models.Model):
-    #Linked to auto incremented ID of classes table
-    class_id = models.IntegerField()
+class CourseApplicants(models.Model):
+    #Linked to auto incremented ID of courses table
+    course = models.ForeignKey = (
+        'Courses'
+    )
     #Linked to auto incremented ID of students table
-    student_id = models.IntegerField()
+    student = models.ForeignKey = (
+        'Students'
+    )
     application_status_id = models.IntegerField()
     hiring_status_id = models.IntegerField()
     date_submitted = models.DateTimeField(auto_now_add=True)
     personal_statement = models.CharField(max_length=400)
-    class_grade = models.CharField(max_length=4, choices=DataDefinitions.GRADE_CHOICES)
+    course_grade = models.CharField(max_length=4, choices=DataDefinitions.GRADE_CHOICES)
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
 
 
