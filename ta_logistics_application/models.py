@@ -86,6 +86,7 @@ class Classes(models.Model):
     class_listing_id = models.CharField(max_length=6)
     class_name = models.CharField(max_length=50)
     available_hours = models.IntegerField()
+    is_active = models.BooleanField(default=False)
     selected_optional_field_ids = models.CharField(max_length = 200, validators=[validate_comma_separated_integer_list], null=True)
 
 class ClassApplicants(models.Model):
