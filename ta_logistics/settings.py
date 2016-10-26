@@ -114,8 +114,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-# tell it where to redirect
-LOGIN_REDIRECT_URL = '/'
+# tell it where to redirect, go home after login makes sense to me.
+LOGIN_REDIRECT_URL = '/home'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
