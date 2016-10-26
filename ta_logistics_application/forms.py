@@ -11,7 +11,7 @@ class LoginForm(AuthenticationForm):
 
 
 class ResumeForm(forms.ModelForm):
-OPT_DATA_STR = 'optional_data'
+    OPT_DATA_STR = 'optional_data'
 ################ Student Context ################
 class StudentProfileForm(forms.ModelForm):
     class Meta:
