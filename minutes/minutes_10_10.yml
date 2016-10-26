@@ -1,0 +1,19 @@
+date: October 10, 2016
+meeting_type: group # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <jrhoeber>, <komlanaz>, <fgpinnoc>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <josephpu>, progress: Uploaded youtube video},
+  {ubit: <jrhoeber>, progress: Touched up views to make them more UB(ish)},
+  {ubit: <fgpinnoc>, progress: None},
+  {ubit: <komlanaz>, progress: None},
+  ]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: Waiting on word from Jesse for SSL cert
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  Talked with carl and atri about the design of the application
+  Most work for sprint 2 was backend
+  sprint 3 will consists of front end work that involves total basic application functionality

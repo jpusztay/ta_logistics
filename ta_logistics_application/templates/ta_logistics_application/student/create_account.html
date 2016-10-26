@@ -3,9 +3,9 @@
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>Application</h2>
+            <h2>Create Account</h2>
         </div>
-        <div class="footnotes">
+        <div>
             <form method="post" action ="" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
