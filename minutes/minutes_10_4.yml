@@ -1,0 +1,26 @@
+date: October 4, 2016
+meeting_type: instructor # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <jrhoeber>, <fgpinnoc>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  {ubit: <komlanaz>, reason: Had class, known before the meeting.}
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: Worked on building models.},
+  {ubit: <fgpinnoc>, progress: Began implementing file upload for resumes},
+  {ubit: <josephpu>, progress: Implemented front end google sign in, started back end handling},
+  {ubit: <komlanaz>, progress: Worked on views}
+  ]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: Waiting for info on SSL for LDAP from Jesse.},
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  Discussed the time frame for LDAP. Google will be used for sprint 2, but we should have SSL for sprint 3
+  Jesse -> Getting info from UB for filling out the forms will not happen, give up on that. The system will not handle it
+  Generate reports on sprint 4
+  Should ask people for person numbers.
+  # Jesse's title for web master ->"Master of Web Systems Administration" aka Carl
+  Algorithm implementation-> we will have a default algorithm for student matching, models should be robust enough to handle "plug and play"
+  Algorithm should handle hours
+  Discussed system handling of time-line (when does the job post, how long do we wait to hire? what about how many hours they can offer? etc.)
+  Track step by step how to deploy this app to the server in prep for sprint 5.

@@ -3,85 +3,14 @@
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>Apply For Job</h2>
+            <h2>Application</h2>
         </div>
-
         <div class="footnotes">
-
             <form method="post" action ="" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="exampleSelect1">Select Position</label>
-                    <select class="form-control" id="exampleSelect1">
-                        <option>CSE 115 UTA</option>
-                        <option>CSE 116 UTA</option>
-                        <option>CSE 250 UTA</option>
-                        <option>CSE 331 UTA</option>
-                        <option>CSE 442 UTA</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="first-name-field">First Name</label>
-                    <input class="form-control" id="first-name-field" placeholder="Enter First Name">
-                </div>
-                <div class="form-group">
-                    <label for="last-name-field">Last Name</label>
-                    <input class="form-control" id="last-name-field" placeholder="Enter Last Name">
-                </div>
-                <label for="email-field">Email Address</label>
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="UBIT Name" aria-describedby="basic-addon2">
-                        <span class="input-group-addon" id="email-field">@buffalo.edu</span>
-                    </div>
-                </div>
-
-
-                <div class="form-group">
-                    <label for="GPASelect">Select GPA</label>
-                    <select class="form-control" id="GPASelect">
-                        <option>4.0</option>
-                        <option>3.9</option>
-                        <option>3.8</option>
-                        <option>3.7</option>
-                        <option>3.6</option>
-                        <option>3.5</option>
-                        <option>3.4</option>
-                        <option>3.3</option>
-                        <option>3.2</option>
-                        <option>3.1</option>
-                        <option>3.0</option>
-                        <option>&lt; 3.0</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="GradeSelect">Grade in class applying for</label>
-                    <select class="form-control" id="GradeSelect">
-                        <option>A</option>
-                        <option>A-</option>
-                        <option>B+</option>
-                        <option>B</option>
-                        <option>B-</option>
-                        <option>< B-</option>
-
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="explainationArea">Briefly explain why you would like this position</label>
-                    <textarea class="form-control" id="explainationArea" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputFile">Resume</label>
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <small id="fileHelp" class="form-text text-muted">Please enter a PDF or a docx file</small>
-                </div>
+                {% csrf_token %}
+                {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
-
         </div>
     </div>
 {% endblock %}
-
