@@ -19,9 +19,12 @@ from django.contrib.auth import views
 from ta_logistics_application.forms import LoginForm
 
 urlpatterns = [
-    url(r'^app/', include('ta_logistics_application.urls')),
+
+    url(r'', include('ta_logistics_application.urls')),
+
     url(r'^login/$', views.login,
-        {'template_name': 'ta_logistics_application/login.html', 'authentication_form': LoginForm}),
+        {'template_name': 'ta_logistics_application/login.html', 'authentication_form': LoginForm}, name='login'),
+
     url(r'^logout/$', views.logout, {'next_page': '/login'}),
 
     url(r'^admin/', include(admin.site.urls)),
