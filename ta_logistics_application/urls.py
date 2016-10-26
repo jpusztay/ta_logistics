@@ -1,8 +1,9 @@
 from django.conf.urls import url
 from . import views
 
+
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    url(r'^home/', views.group_index, name='home'),
     url(r'^student/application/$', views.application, name='application'),
     url(r'^student/profile/$', views.student_profile, name='student_profile'),
     url(r'^student/profile/edit$', views.edit_student_profile, name='edit_student_profile'),

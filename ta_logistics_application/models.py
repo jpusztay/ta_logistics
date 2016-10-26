@@ -78,6 +78,7 @@ class Students(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     teaching_experience = models.CharField(max_length=400, default="")
 
+
 class Classes(models.Model):
     #Professor ID: Linked to auto incremented ID of professor table
     professor_id = models.IntegerField()
@@ -100,6 +101,7 @@ class ClassApplicants(models.Model):
     personal_statement = models.CharField(max_length=400)
     class_grade = models.CharField(max_length=4, choices=DataDefinitions.GRADE_CHOICES)
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
+
 
 
 class Professors(models.Model):

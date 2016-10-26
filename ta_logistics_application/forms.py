@@ -1,13 +1,18 @@
+from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
 from .models import Students, Classes, ApplicationFields, ClassApplicants, DataDefinitions
 
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(label="Username", max_length=30,
+                               widget=forms.TextInput(attrs={'class': 'form-control', 'name': 'username'}))
+    password = forms.CharField(label="Password", max_length=30,
+                               widget=forms.TextInput(attrs={'class': 'form-control', 'name': 'password'}))
 
+
+class ResumeForm(forms.ModelForm):
 OPT_DATA_STR = 'optional_data'
-
 ################ Student Context ################
-
-
 class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = Students

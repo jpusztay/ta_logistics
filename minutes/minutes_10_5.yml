@@ -1,0 +1,22 @@
+date: October 5, 2016
+meeting_type: ta # meeting_type can "group", "ta", or "instructor"
+attendance: [<komlanaz>, <jrhoeber>, <josephpu>]
+
+absent: []
+
+excused_absences: [ ubit: <fgpinnoc>, reason: Career fair # Any legitamite excuses for absent team members
+]
+
+  task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: Assembled models, basics are done},
+  {ubit: <komlanaz>, progress: CSS is done},
+  {ubit: <josephpu>, progress: Scrapped OAuth2, began LDAPS},
+  {ubit: <fgpinnoc>, progress: Unknown}
+  ]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  OAuth2 Is being abandoned for LDAPS, told by Jesse that imcompletion is fine for the sprint since it was the result of a delay
+  Progress updates around the table
+  We are generally on track for sprint 2!
