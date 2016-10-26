@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.template import loader
+from django.contrib.auth.decorators import login_required
 
 from ta_logistics_application.forms import ResumeForm
 
@@ -12,6 +13,19 @@ def login(request):
     return HttpResponse(template.render())
 
 
+@login_required(login_url='login/')
+def group_index(request):
+    if request.get_user(request).is_anonymous():
+        pass
+    if request.get_user(request).get_group_permissions() == "faculty":
+        template = loader.get_template('ta_logistics_application/professor/professor_index.html')
+        return HttpResponse(template.render())
+    elif request.get_user(request).get_group_permissions() == "student":
+        template = loader.get_template('ta_logistics_application/student/student_index.html')
+        return HttpResponse(template.render())
+
+
+@login_required(login_url='login/')
 def submit(request):
     if request.method == 'POST':
         form = ResumeForm(request.POST, request.FILES)
@@ -25,6 +39,7 @@ def submit(request):
     return render(request, 'ta_logistics_application/student/application.html', {'form': form})
 
 
+@login_required(login_url='login/')
 def edit_student_profile(request):
     if request.method == 'POST':
         form = ResumeForm(request.POST, request.FILES)
@@ -37,6 +52,7 @@ def edit_student_profile(request):
     return render(request, 'ta_logistics_application/student/edit_profile.html', {'form': form})
 
 
+@login_required(login_url='login/')
 def student_profile(request):
     template = loader.get_template('ta_logistics_application/student/profile.html')
     return HttpResponse(template.render())
