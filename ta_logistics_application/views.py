@@ -6,9 +6,11 @@ from django.template import loader
 
 from ta_logistics_application.forms import ResumeForm
 
-def index(request):
-    template = loader.get_template('ta_logistics_application/index.html')
+
+def login(request):
+    template = loader.get_template('ta_logistics_application/login.html')
     return HttpResponse(template.render())
+
 
 def submit(request):
     if request.method == 'POST':
@@ -22,6 +24,7 @@ def submit(request):
         form = ResumeForm()
     return render(request, 'ta_logistics_application/student/application.html', {'form': form})
 
+
 def edit_student_profile(request):
     if request.method == 'POST':
         form = ResumeForm(request.POST, request.FILES)
@@ -32,6 +35,7 @@ def edit_student_profile(request):
     else:
         form = ResumeForm()
     return render(request, 'ta_logistics_application/student/edit_profile.html', {'form': form})
+
 
 def student_profile(request):
     template = loader.get_template('ta_logistics_application/student/profile.html')
