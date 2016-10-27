@@ -26,7 +26,6 @@ def group_index(request):
 
 
 ################ Student Context ################
-
 # Finish when student index is finished
 # Get s_id and c_id parts working
 def application(request):#, c_id, s_id):
