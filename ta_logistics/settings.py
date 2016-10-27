@@ -115,6 +115,7 @@ USE_L10N = True
 USE_TZ = True
 
 # tell it where to redirect, go home after login makes sense to me.
+LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/home'
 
 # Static files (CSS, JavaScript, Images)

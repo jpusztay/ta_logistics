@@ -9,13 +9,12 @@ from ta_logistics_application.models import Classes, ApplicationFields, DataDefi
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm
 
 
-
 def login(request):
     template = loader.get_template('ta_logistics_application/login.html')
     return HttpResponse(template.render())
 
 
-@login_required(login_url='login/')
+@login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
         if request.user.groups.all()[0].name == "faculty":
@@ -44,7 +43,7 @@ def application(request):#, c_id, s_id):
     return render(request, 'ta_logistics_application/student/application.html', {'form': form})
 
 
-@login_required(login_url='login/')
+@login_required(login_url='login')
 def edit_student_profile(request):
     if request.method == 'POST':
         form = StudentProfileForm(request.POST, request.FILES)
@@ -57,7 +56,7 @@ def edit_student_profile(request):
     return render(request, 'ta_logistics_application/student/edit_profile.html', {'form': form})
 
 
-@login_required(login_url='login/')
+@login_required(login_url='login')
 def student_profile(request):
     template = loader.get_template('ta_logistics_application/student/profile.html')
     return HttpResponse(template.render())
