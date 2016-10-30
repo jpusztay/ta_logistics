@@ -106,14 +106,11 @@ class DataDefinitions():
                 else:
                     main_student_data[index][field] = getattr(applicant, field)
             optional_field_data = json.loads(applicant.optional_fields)
-            print(optional_field_ids)
             for ident in optional_field_ids:
-                print("Should be 9")
                 opt_field = ApplicationFields.objects.get(id=ident).field_name
                 main_student_data[index][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
             for field in secondary_data_fields:
                 secondary_student_data[index][field] = getattr(applicant, field)
-        print(main_student_data)
         return main_student_data, secondary_student_data
 
 

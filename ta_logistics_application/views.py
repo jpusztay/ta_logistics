@@ -110,7 +110,6 @@ def professor_create_class(request):
 def professor_class_applicants(request):
     data_defs = DataDefinitions()
     class_id = int(request.GET.urlencode().split('=')[-1])
-    fields = []
     main_student_data, secondary_student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
 
 
