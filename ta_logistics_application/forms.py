@@ -3,6 +3,10 @@ import json
 from django import forms
 from .models import Students, Classes, ApplicationFields, ClassApplicants, DataDefinitions
 
+
+#String Constants go HERE:
+OPT_DATA_STR = 'optional_data'
+
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Username", max_length=30,
                                widget=forms.TextInput(attrs={'class': 'form-control', 'name': 'username'}))
@@ -10,10 +14,10 @@ class LoginForm(AuthenticationForm):
                                widget=forms.TextInput(attrs={'class': 'form-control', 'name': 'password'}))
 
 
-class ResumeForm(forms.ModelForm):
-    OPT_DATA_STR = 'optional_data'
+
 ################ Student Context ################
 class StudentProfileForm(forms.ModelForm):
+
     class Meta:
         model = Students
         fields = ['ubit_name', 'person_number', 'first_name', 'last_name', 'gpa', 'resume', 'teaching_experience']
@@ -101,12 +105,13 @@ class CreateClassForm(forms.ModelForm):
     class Meta:
         data_defs = DataDefinitions()
         model = Classes
-        fields = ['professor_id','class_listing_id', 'active_semester', 'class_name', 'available_hours',
+        fields = ['professor_id','class_listing_id', 'active_semester', 'is_active', 'class_name', 'available_hours',
                   'selected_optional_field_ids']
         widgets = {
             'professor_id': forms.HiddenInput(),
             'class_listing_id': forms.TextInput(attrs={'placeholder': 'e.g. CSE331'}),
             'active_semester': forms.Select(choices=data_defs.getActiveSemesters(), attrs={'placeholder': 'Select Active Semester'}),
+            'is_active': forms.Select(choices=data_defs.BOOL_YES_NO),
             'class_name': forms.TextInput(attrs={'placeholder': 'e.g. Introduction to Algorithm Analysis and Design'}),
             'available_hours': forms.NumberInput(attrs={'placeholder': 'Estimate If You Don\'t Know Yet'}),
             'selected_optional_field_ids': forms.HiddenInput(),
@@ -114,6 +119,7 @@ class CreateClassForm(forms.ModelForm):
         labels = {
             'class_listing_id': 'Class ID',
             'active_semester': 'Active Semester',
+            'is_active': "Activate This Class Upon Creation?",
             'class_name': 'Class Title',
             'available_hours': 'Hours Available in Budget',
         }

@@ -1,10 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="page-header">
+        <div class="jumbotron">
+            <h2>Applicants</h2>
+        </div>
+        <div>
+            {% if class_applicants %}
+                <table class = 'table'>
+                    <thead>
+                        <tr>
+                            {% for header in column_headers %}
+                                <th>{{ header }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for applicant in class_applicants %}
+                        <tr>
+                            {% for key, value in applicant %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No Classes Yet</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

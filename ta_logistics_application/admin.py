@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Students, Classes, Professors, ApplicationFields, ClassApplicants, StatusText
+from .models import Students, Classes, Professors, ApplicationFields, ClassApplicants
 
 class StudentsAdmin(admin.ModelAdmin):
     model = Students
@@ -13,8 +13,6 @@ class ClassApplicantsAdmin(admin.ModelAdmin):
 class ApplicationFieldsAdmin(admin.ModelAdmin):
     model = ApplicationFields
 
-class StatusTextAdmin(admin.ModelAdmin):
-    model = StatusText
 
 class ProfessorsAdmin(admin.ModelAdmin):
     model = Professors
@@ -24,4 +22,3 @@ admin.site.register(Professors)
 admin.site.register(Students)
 admin.site.register(Classes)
 admin.site.register(ClassApplicants)
-admin.site.register(StatusText)

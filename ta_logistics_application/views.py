@@ -108,3 +108,19 @@ def professor_create_class(request):
         'optional_fields': OptionalFieldsForm()
     }
     return render(request, 'ta_logistics_application/professor/create_class.html', context)
+
+def professor_class_applicants(request):
+    data_defs = DataDefinitions()
+    class_id = request.GET.urlencode().split('=')[-1]
+    fields = []
+    student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
+    #header_dict = data_defs.getAllFieldsDictionary()
+    #field_text = [header_dict[x] for x in fields]
+    class_applicant_data = {}
+
+    #context = {
+     #   'class_applicants': class_applicants,
+     #   'field_names': field_names,
+     #   'column_headers': field_text,
+    #}
+    #return render(request, 'ta_logistics_application/professor/professor_index.html', context)
