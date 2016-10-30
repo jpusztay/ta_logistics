@@ -82,7 +82,7 @@ def create_student_account(request):
 
 def professor_index(request):
     p_id = 1
-    current_class_list = Classes.objects.filter(professor_id=p_id, active_semester='FA16')
+    current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True)
     context = {'current_class_list':current_class_list}
     template = loader.get_template('ta_logistics_application/professor/professor_index.html')
     return render(request, 'ta_logistics_application/professor/professor_index.html', context)
@@ -111,16 +111,14 @@ def professor_create_class(request):
 
 def professor_class_applicants(request):
     data_defs = DataDefinitions()
-    class_id = request.GET.urlencode().split('=')[-1]
+    class_id = int(request.GET.urlencode().split('=')[-1])
     fields = []
-    student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
-    #header_dict = data_defs.getAllFieldsDictionary()
-    #field_text = [header_dict[x] for x in fields]
-    class_applicant_data = {}
+    main_student_data, secondary_student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
 
-    #context = {
-     #   'class_applicants': class_applicants,
-     #   'field_names': field_names,
-     #   'column_headers': field_text,
-    #}
-    #return render(request, 'ta_logistics_application/professor/professor_index.html', context)
+
+    context = {
+        'main_student_data': main_student_data,
+        'secondary_student_data': secondary_student_data,
+    }
+
+    return render(request, 'ta_logistics_application/professor/professor_class_applicants.html', context)

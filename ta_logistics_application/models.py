@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import validate_comma_separated_integer_list, MaxValueValidator, MinValueValidator
 from ta_logistics_application.validators import validate_optional_field_json
+from collections import OrderedDict
 import datetime, json
 
 class DataDefinitions():
@@ -59,15 +60,15 @@ class DataDefinitions():
         (4, 'Wait Listed'),
     )
 
-    STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants ",\
-                         "JOIN ta_logistics_application_students as students on (applicants.student_id = students.id) ",\
-                         "JOIN ta_logistics_application_statustext as statustext on (statustext.status_type = 1 ",\
-                         "and applicants.hiring_status_id = statustext.status_id)"
+    STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
+                         "JOIN ta_logistics_application_students as students on (applicants.student_id = students.id) "+\
+                         "where applicants.class_id = %d"
 
     INT_FIELD = "INT"
     FLOAT_FIELD = "FLOAT"
     TEXT_FIELD = "TEXT"
     COMFORT_LVL_FIELD = "CMFT"
+    OPTIONAL_DATA = "optional_data"
 
     def getActiveSemesters(self):
         ret = []
@@ -85,32 +86,36 @@ class DataDefinitions():
 
     def getStudentDataForApplicantsView(self, class_id):
         applicants = ClassApplicants.objects.filter(class_id=class_id).select_related()
-        print(applicants.values())
-        data_fields = ['ubit_name', 'first_name', 'last_name', 'hiring_status', 'class_grade', 'gpa',]
-
-        raw_applicant_data = ClassApplicants.objects.raw(self.STUDENT_DATA_QUERY)
-        print(raw_applicant_data)
-'''
+        main_data_fields = ['ubit_name', 'first_name', 'last_name', 'hiring_status', 'class_grade', 'gpa',]
+        secondary_data_fields = ['personal_statement', 'resume']
+        raw_applicant_data = ClassApplicants.objects.raw(self.STUDENT_DATA_QUERY%class_id)
+        main_student_data = []
+        secondary_student_data = []
+        optional_field_ids = list(map(int, Classes.objects.get(id=class_id).selected_optional_field_ids.split(',')))
         for applicant in raw_applicant_data:
+            index = len(main_student_data)
+            main_student_data.append(OrderedDict())
+            secondary_student_data.append(OrderedDict())
+            for field in main_data_fields:
+                if field == 'hiring_status':
+                    for tup in self.HIRING_STATUS:
+                        id, name = tup
+                        if id == applicant.hiring_status_id:
+                            main_student_data[index][field] = name
+                            break
+                else:
+                    main_student_data[index][field] = getattr(applicant, field)
             optional_field_data = json.loads(applicant.optional_fields)
-            applicant.
+            print(optional_field_ids)
             for ident in optional_field_ids:
+                print("Should be 9")
+                opt_field = ApplicationFields.objects.get(id=ident).field_name
+                main_student_data[index][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
+            for field in secondary_data_fields:
+                secondary_student_data[index][field] = getattr(applicant, field)
+        print(main_student_data)
+        return main_student_data, secondary_student_data
 
-
-        optional_field_ids = map(int, Classes.objects.get(id=class_id).selected_optional_field_ids.split(','))
-        for ident in optional_field_ids:
-            data_fields.append(ApplicationFields.objects.get(id=ident).field_name)
-
-        field_names = {}
-        fields_query_obj = ApplicationFields.objects.all()
-        for field_objs in fields_query_obj:
-            field_names[field_objs.field_name] = field_objs.field_text
-
-        data_fields.append('personal_statement')
-        data_fields.append('resume')
-
-        student_data = {}
-'''
 
 class Students(models.Model):
     ubit_name = models.CharField(max_length=10)

@@ -6,19 +6,19 @@
             <h2>Applicants</h2>
         </div>
         <div>
-            {% if class_applicants %}
+            {% if main_student_data %}
                 <table class = 'table'>
                     <thead>
                         <tr>
-                            {% for header in column_headers %}
-                                <th>{{ header }}</th>
+                            {% for key, value in main_student_data.0.items %}
+                                <th>{{ key }}</th>
                             {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
-                    {% for applicant in class_applicants %}
+                    {% for applicant in main_student_data %}
                         <tr>
-                            {% for key, value in applicant %}
+                            {% for key, value in applicant.items %}
                                 <td>{{ value }}</td>
                             {% endfor %}
                         </tr>
@@ -26,7 +26,7 @@
                     </tbody>
                 </table>
             {% else %}
-                <p>No Classes Yet</p>
+                <p>No Applicants Yet</p>
             {% endif %}
         </div>
     </div>
