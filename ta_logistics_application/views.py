@@ -20,7 +20,6 @@ def group_index(request):
     if request.user.is_authenticated():
         if request.user.groups.all()[0].name == "faculty":
             template = loader.get_template('ta_logistics_application/professor/professor_index.html')
-            return HttpResponse(template.render())
         elif request.user.groups.all()[0].name == "student":
             template = loader.get_template('ta_logistics_application/student/student_index.html')
             return HttpResponse(template.render())

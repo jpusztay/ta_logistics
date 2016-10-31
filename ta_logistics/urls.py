@@ -29,3 +29,4 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
 ]
+admin.site.site_header = 'SUNY AT BUFFALO'
