@@ -18,11 +18,9 @@ def login(request):
 def group_index(request):
     if request.user.is_authenticated():
         if request.user.groups.all()[0].name == "faculty":
-            template = loader.get_template('ta_logistics_application/professor/professor_index.html')
-            return HttpResponse(template.render())
+            return render(request, 'ta_logistics_application/professor/professor_index.html')
         elif request.user.groups.all()[0].name == "student":
-            template = loader.get_template('ta_logistics_application/student/student_index.html')
-            return HttpResponse(template.render())
+            return render(request,'ta_logistics_application/student/student_index.html')
 
 
 ################ Student Context ################
@@ -60,6 +58,7 @@ def student_profile(request):
     template = loader.get_template('ta_logistics_application/student/profile.html')
     return HttpResponse(template.render())
 
+
 @login_required(login_url='login')
 def create_student_account(request):
     if request.method == 'POST':
@@ -74,10 +73,7 @@ def create_student_account(request):
     return render(request, 'ta_logistics_application/student/create_account.html', {'form': form})
 
 
-
 ################ Professor Context ################
-
-
 @login_required(login_url='login')
 def professor_index(request):
     p_id = 1
