@@ -60,7 +60,7 @@ def student_profile(request):
     template = loader.get_template('ta_logistics_application/student/profile.html')
     return HttpResponse(template.render())
 
-
+@login_required(login_url='login')
 def create_student_account(request):
     if request.method == 'POST':
         form = StudentProfileForm(request.POST, request.FILES)
@@ -78,6 +78,7 @@ def create_student_account(request):
 ################ Professor Context ################
 
 
+@login_required(login_url='login')
 def professor_index(request):
     p_id = 1
     current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True)
@@ -86,6 +87,7 @@ def professor_index(request):
     return render(request, 'ta_logistics_application/professor/professor_index.html', context)
 
 
+@login_required(login_url='login')
 def professor_create_class(request):
     if request.method == 'POST':
         selected_optionals = request.POST.getlist("select_optional_fields")
@@ -107,6 +109,8 @@ def professor_create_class(request):
     }
     return render(request, 'ta_logistics_application/professor/create_class.html', context)
 
+
+@login_required(login_url='login')
 def professor_class_applicants(request):
     data_defs = DataDefinitions()
     class_id = int(request.GET.urlencode().split('=')[-1])
