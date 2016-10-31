@@ -1,0 +1,19 @@
+date: October 15, 2016
+meeting_type: group # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <jrhoeber>, fgpinnoc]
+absent: [<komlanaz>]
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <josephpu>, progress: Worked on django auth},
+  {ubit: <jrhoeber>, progress: worked on db design},
+  {ubit: <komlanaz>, progress: N/A},
+  {ubit: <fgpinnoc>, progress: Student contexty stuff}
+  ]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: that ssl tho...}
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  DB design still in progress
+  still waiting on ssl certs
+  contexts to be setup for views

@@ -1,4 +1,4 @@
-{% load static %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -30,26 +30,27 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="{% url 'index' %}" id="overrides">TA Logistics</a>
+                        <a class="navbar-brand" href="{% url 'home' %}" id="overrides">TA Logistics</a>
                     </div>
                     <div id="navbar" class="navbar-collapse collapse" id="overrides">
-                        <ul class="nav navbar-nav" id="overrides">
+
+                    <!--    <ul class="nav navbar-nav" id="overrides">
                             <li class="dropdown" id="overrides">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="overrides">Options <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu" id="overrides">
-                                    <li ><a href="{% url 'submit' %}" id="overrides">Application Page</a></li>
-                                    <li><a href="#" id="overrides">Option 2</a></li>
+                                    <li ><a href="{% url 'application' %}" id="overrides">Application Page</a></li>
                                 </ul>
                             </li>
-
                         </ul>
-
+-->
                         <ul class="nav navbar-nav navbar-right">
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" id="overrides">Username<span class="caret"></span></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" id="overrides">{% if user.is_authenticated %}{{user.get_username}}{% endif %}<span class="caret"></span></a>
                                 <ul class="dropdown-menu" id="overrides">
                                     <li><a href="{% url 'student_profile' %}" id="overrides">Profile</a></li>
-                                    <li><a id="overrides">Logout</a></li>
+                                    <li>
+                                        <a href="/logout">Logout</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -63,7 +64,6 @@
             {% block content %}
             {% endblock %}
         </div>
-
     </body>
 </html>
 

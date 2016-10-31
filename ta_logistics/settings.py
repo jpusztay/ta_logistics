@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-   'django.contrib.staticfiles',
+    'django.contrib.staticfiles',
     'ta_logistics_application',
 ]
 
@@ -55,8 +55,7 @@ ROOT_URLCONF = 'ta_logistics.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,6 +114,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+# tell it where to redirect, go home after login makes sense to me.
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/home'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
