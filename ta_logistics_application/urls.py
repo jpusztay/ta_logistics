@@ -6,7 +6,7 @@ urlpatterns = [
     url(r'^home/', views.group_index, name='home'),
 
     #Student
-    url(r'^student/index/$', views.student_index, name='student_index'),
+    url(r'^student/profile$', views.student_index, name='student_profile'),
     url(r'^student/apply/$', views.student_apply, name='student_apply'),
     url(r'^student/create', views.student_create, name='student_create'),
     url(r'^student/edit$', views.student_edit, name='student_edit'),
