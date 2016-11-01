@@ -121,7 +121,7 @@ class CreateClassForm(forms.ModelForm):
             'active_semester': 'Active Semester',
             'is_active': "Activate This Class Upon Creation?",
             'class_name': 'Class Title',
-            'available_hours': 'Hours Available in Budget',
+            'available_hours': 'Hours Available in Budget (Total for Semester)',
         }
 
 

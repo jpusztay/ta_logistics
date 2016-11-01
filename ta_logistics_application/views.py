@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
+from django.template.defaulttags import register
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from ta_logistics_application.models import Classes, ApplicationFields, DataDefinitions
+from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm
 
 
@@ -29,7 +30,7 @@ def group_index(request):
 # Finish when student index is finished
 # Get s_id and c_id parts working
 def application(request):#, c_id, s_id):
-    c_id = 6
+    c_id = 12
     s_id = 1
     if request.method == 'POST':
         form = ApplicationForm(request.POST, class_id=c_id, student_id=s_id)
@@ -80,8 +81,12 @@ def create_student_account(request):
 
 def professor_index(request):
     p_id = 1
-    current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True)
-    context = {'current_class_list':current_class_list}
+    current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True).values()
+    for current_class in current_class_list:
+        current_class['applicant_count'] = ClassApplicants.objects.filter(class_id=current_class['id']).count()
+    context = {
+        'current_class_list' : current_class_list
+    }
     template = loader.get_template('ta_logistics_application/professor/professor_index.html')
     return render(request, 'ta_logistics_application/professor/professor_index.html', context)
 
@@ -107,15 +112,25 @@ def professor_create_class(request):
     }
     return render(request, 'ta_logistics_application/professor/create_class.html', context)
 
+
+@register.filter
+def get_item(dictionary, key):
+    print(dictionary)
+    return dictionary.get(key).items()
+
+
 def professor_class_applicants(request):
     data_defs = DataDefinitions()
     class_id = int(request.GET.urlencode().split('=')[-1])
-    main_student_data, secondary_student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
-
-
+    main_student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
+    if main_student_data:
+        num_cols = len(main_student_data[0])
+    else:
+        num_cols = 0
+    print(main_student_data)
     context = {
         'main_student_data': main_student_data,
-        'secondary_student_data': secondary_student_data,
+        'num_cols': num_cols,
     }
 
     return render(request, 'ta_logistics_application/professor/professor_class_applicants.html', context)

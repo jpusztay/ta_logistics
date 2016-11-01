@@ -93,25 +93,26 @@ class DataDefinitions():
         secondary_student_data = []
         optional_field_ids = list(map(int, Classes.objects.get(id=class_id).selected_optional_field_ids.split(',')))
         for applicant in raw_applicant_data:
-            index = len(main_student_data)
             main_student_data.append(OrderedDict())
-            secondary_student_data.append(OrderedDict())
+            secondary_student_data = OrderedDict()
             for field in main_data_fields:
                 if field == 'hiring_status':
                     for tup in self.HIRING_STATUS:
                         id, name = tup
                         if id == applicant.hiring_status_id:
-                            main_student_data[index][field] = name
+                            main_student_data[-1][field] = name
                             break
                 else:
-                    main_student_data[index][field] = getattr(applicant, field)
+                    main_student_data[-1][field] = getattr(applicant, field)
             optional_field_data = json.loads(applicant.optional_fields)
             for ident in optional_field_ids:
                 opt_field = ApplicationFields.objects.get(id=ident).field_name
-                main_student_data[index][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
+                main_student_data[-1][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
             for field in secondary_data_fields:
-                secondary_student_data[index][field] = getattr(applicant, field)
-        return main_student_data, secondary_student_data
+                secondary_student_data[field] = getattr(applicant, field)
+            main_student_data[-1]['secondary_student_data'] = secondary_student_data
+
+        return main_student_data
 
 
 class Students(models.Model):

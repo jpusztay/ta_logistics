@@ -1,30 +1,93 @@
 {% extends 'ta_logistics_application/base.html' %}
 
 {% block content %}
+    <script type="text/javascript" language="javascript" class="init">
+    $( document ).ready( function () {
+
+        function format(d) {
+            console.log(d)
+            // `d` is the original data object for the row
+            var secondary_table = '<table class="table">' +
+                    '<tr>' +
+                    '<td>Full name:</td>' +
+                    '<td>' + d.name + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>Extension number:</td>' +
+                    '<td>' + d.extn + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td>Extra info:</td>' +
+                    '<td>And any further details here (images etc)...</td>' +
+                    '</tr>' +
+                    '</table>';
+        }
+
+        var table = $('#professor_applicants_table').DataTable({
+            "paging": false,
+            "info": false,
+            "searching": false
+        });
+
+        $('#professor_applicants_table tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child(format(row.data())).show();
+                tr.addClass('shown');
+            }
+        });
+    });
+
+    </script>
     <div class="page-header">
         <div class="jumbotron">
             <h2>Applicants</h2>
         </div>
         <div>
             {% if main_student_data %}
-                <table class = 'table'>
-                    <thead>
-                        <tr>
-                            {% for key, value in main_student_data.0.items %}
-                                <th>{{ key }}</th>
+                <div id="long_table">
+                    <table class="table display" id="professor_applicants_table">
+                        <thead>
+                            <tr role="row">
+                                <th class="details-control sorting_disabled"></th>
+                                {% for key, value in main_student_data.0.items %}
+                                    {% ifnotequal key "secondary_student_data" %}
+                                        <th>{{ key }}</th>
+                                    {% else %}
+                                        {% for k, v in value.items %}
+                                           <th style="display:none;">{{ k }}</th>
+                                        {% endfor %}
+                                    {% endifnotequal %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for applicant in main_student_data %}
+                                <tr>
+                                    <td class=" details-control" id="secondary_button_{{ forloop.counter0 }}"></td>
+                                    {% for key, value in applicant.items %}
+                                        {% ifnotequal key "secondary_student_data" %}
+                                            <td>{{ value }}</td>
+                                        {% else %}
+                                            {% for k, v in value.items %}
+                                                <td style="display:none;">{{ v }}</td>
+                                            {% endfor %}
+                                        {% endifnotequal %}
+                                    {% endfor %}
+
+                                </tr>
                             {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for applicant in main_student_data %}
-                        <tr>
-                            {% for key, value in applicant.items %}
-                                <td>{{ value }}</td>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             {% else %}
                 <p>No Applicants Yet</p>
             {% endif %}
