@@ -22,15 +22,19 @@ def group_index(request):
             template = loader.get_template('ta_logistics_application/professor/professor_index.html')
             return HttpResponse(template.render())
         elif request.user.groups.all()[0].name == "student":
-            template = loader.get_template('ta_logistics_application/student/student_index.html')
+            template = loader.get_template('ta_logistics_application/student/index.html')
             return HttpResponse(template.render())
 
 
 ################ Student Context ################
 
+def student_index(request):
+
+    return render(request, 'ta_logistics_application/student/index.html')
+
 # Finish when student index is finished
 # Get s_id and c_id parts working
-def application(request):#, c_id, s_id):
+def student_apply(request):#, c_id, s_id):
     c_id = 6
     s_id = 1
     if request.method == 'POST':
@@ -41,29 +45,10 @@ def application(request):#, c_id, s_id):
             return HttpResponse(template.render())
 
     form = ApplicationForm(class_id=c_id, student_id=s_id)
-    return render(request, 'ta_logistics_application/student/application.html', {'form': form})
+    return render(request, 'ta_logistics_application/student/apply.html', {'form': form})
 
 
-@login_required(login_url='login/')
-def edit_student_profile(request):
-    if request.method == 'POST':
-        form = StudentProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            template = loader.get_template('ta_logistics_application/student/edit_profile.html')
-            return HttpResponse(template.render())
-    else:
-        form = StudentProfileForm()
-    return render(request, 'ta_logistics_application/student/edit_profile.html', {'form': form})
-
-
-@login_required(login_url='login/')
-def student_profile(request):
-    template = loader.get_template('ta_logistics_application/student/profile.html')
-    return HttpResponse(template.render())
-
-
-def create_student_account(request):
+def student_create(request):
     if request.method == 'POST':
         form = StudentProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -73,7 +58,22 @@ def create_student_account(request):
             return HttpResponse(template.render())
     else:
         form = StudentProfileForm()
-    return render(request, 'ta_logistics_application/student/create_account.html', {'form': form})
+    return render(request, 'ta_logistics_application/student/create.html', {'form': form})
+
+
+def student_edit(request):
+    if request.method == 'POST':
+        form = StudentProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            template = loader.get_template('ta_logistics_application/student/edit.html')
+            return HttpResponse(template.render())
+    else:
+        form = StudentProfileForm()
+    return render(request, 'ta_logistics_application/student/edit.html', {'form': form})
+
+
+
 
 
 

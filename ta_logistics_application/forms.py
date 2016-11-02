@@ -96,7 +96,6 @@ class ApplicationForm(forms.Form):
 
 ################ Professor Context ################
 
-
 class CreateClassForm(forms.ModelForm):
     class Meta:
         data_defs = DataDefinitions()

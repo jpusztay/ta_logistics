@@ -1,0 +1,37 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="row page-header">
+        <div class="jumbotron">
+            <h2>Student Profile</h2>
+        </div>
+
+        <div class="row">
+            {% if current_class_list %}
+                <table class = 'table'>
+                    <thead>
+                        <tr>
+                            <th>Class ID</th>
+                            <th>Class Name</th>
+                            <th>Number of applicants</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for class in current_class_list %}
+                        <tr>
+                            <td>{{ class.class_listing_id }}</td>
+                            <td>{{ class.class_name }}</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>When you apply to classes they will show up here.</p>
+            {% endif %}
+
+            <a href="{% url 'student_apply' %}" class="btn btn-primary">Apply</a>
+        </div>
+    </div>
+{% endblock %}
+
