@@ -1,0 +1,33 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="page-header">
+        <div class="jumbotron">
+            <h2>Applicants</h2>
+        </div>
+        <div>
+            {% if main_student_data %}
+                <table class = 'table'>
+                    <thead>
+                        <tr>
+                            {% for key, value in main_student_data.0.items %}
+                                <th>{{ key }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for applicant in main_student_data %}
+                        <tr>
+                            {% for key, value in applicant.items %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No Applicants Yet</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,12 +1,14 @@
 from django.db import models
 from django.core.validators import validate_comma_separated_integer_list, MaxValueValidator, MinValueValidator
-# the following lines added:
-import datetime
-from django.utils import timezone
 from ta_logistics_application.validators import validate_optional_field_json
-
+from collections import OrderedDict
+import datetime, json
 
 class DataDefinitions():
+    BOOL_YES_NO = (
+        (1, 'Yes'),
+        (0, 'Activate Later')
+    )
     GPA_CHOICES = (
         (4.0, '4.0'),
         (3.9, '3.9'),
@@ -45,11 +47,28 @@ class DataDefinitions():
         ('Novince','Novince'),
         ('None','None'),
     )
+    APPLICATION_STATUS = (
+        (0, 'Application Submitted'),
+        (1, 'Application Pending'),
+        (2, 'Application Complete'),
+    )
+    HIRING_STATUS = (
+        (0, 'Pending Review'),
+        (1, 'Rejected'),
+        (2, 'Interviewing'),
+        (3, 'Accepted'),
+        (4, 'Wait Listed'),
+    )
+
+    STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
+                         "JOIN ta_logistics_application_students as students on (applicants.student_id = students.id) "+\
+                         "where applicants.class_id = %d"
 
     INT_FIELD = "INT"
     FLOAT_FIELD = "FLOAT"
     TEXT_FIELD = "TEXT"
     COMFORT_LVL_FIELD = "CMFT"
+    OPTIONAL_DATA = "optional_data"
 
     def getActiveSemesters(self):
         ret = []
@@ -65,7 +84,34 @@ class DataDefinitions():
             ret.append((i.id, i.field_text))
         return tuple(ret)
 
-
+    def getStudentDataForApplicantsView(self, class_id):
+        applicants = ClassApplicants.objects.filter(class_id=class_id).select_related()
+        main_data_fields = ['ubit_name', 'first_name', 'last_name', 'hiring_status', 'class_grade', 'gpa',]
+        secondary_data_fields = ['personal_statement', 'resume']
+        raw_applicant_data = ClassApplicants.objects.raw(self.STUDENT_DATA_QUERY%class_id)
+        main_student_data = []
+        secondary_student_data = []
+        optional_field_ids = list(map(int, Classes.objects.get(id=class_id).selected_optional_field_ids.split(',')))
+        for applicant in raw_applicant_data:
+            index = len(main_student_data)
+            main_student_data.append(OrderedDict())
+            secondary_student_data.append(OrderedDict())
+            for field in main_data_fields:
+                if field == 'hiring_status':
+                    for tup in self.HIRING_STATUS:
+                        id, name = tup
+                        if id == applicant.hiring_status_id:
+                            main_student_data[index][field] = name
+                            break
+                else:
+                    main_student_data[index][field] = getattr(applicant, field)
+            optional_field_data = json.loads(applicant.optional_fields)
+            for ident in optional_field_ids:
+                opt_field = ApplicationFields.objects.get(id=ident).field_name
+                main_student_data[index][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
+            for field in secondary_data_fields:
+                secondary_student_data[index][field] = getattr(applicant, field)
+        return main_student_data, secondary_student_data
 
 
 class Students(models.Model):
@@ -95,13 +141,12 @@ class ClassApplicants(models.Model):
     class_id = models.IntegerField()
     #Linked to auto incremented ID of students table
     student_id = models.IntegerField()
-    application_status_id = models.IntegerField()
-    hiring_status_id = models.IntegerField()
+    application_status_id = models.IntegerField(choices=DataDefinitions.APPLICATION_STATUS, default=0)
+    hiring_status_id = models.IntegerField(choices=DataDefinitions.HIRING_STATUS, default=0)
     date_submitted = models.DateTimeField(auto_now_add=True)
     personal_statement = models.CharField(max_length=400)
     class_grade = models.CharField(max_length=4, choices=DataDefinitions.GRADE_CHOICES)
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
-
 
 
 class Professors(models.Model):
@@ -109,11 +154,6 @@ class Professors(models.Model):
     first_name = models.CharField(max_length=15)
     last_name = models.CharField(max_length=15)
 
-class StatusText(models.Model):
-    # Status Types: 0 will be application status, 1 will be hiring status
-    status_type = models.IntegerField()
-    status_id = models.IntegerField()
-    status_text = models.CharField(max_length=30)
 
 class ApplicationFields(models.Model):
     field_name = models.CharField(max_length=30)
@@ -122,5 +162,4 @@ class ApplicationFields(models.Model):
     from_student = models.BooleanField()
     data_type = models.CharField(max_length=6, choices=DataDefinitions.FIELD_TYPE_CHOICES)
     max_length = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(400)])
-
 

@@ -10,11 +10,12 @@
             {% if form.errors %}
                 <p>Your username and password didn't match. Please try again.</p>
             {% endif %}
-            <h3>Login</h3>
+            <h3>Please Login With Your UBIT</h3>
             <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
 
                 <p class="bs-component">
+
                     <table>
                         <tr>
                             <td>{{ form.username.label_tag }}</td>
@@ -25,7 +26,8 @@
                             <td>{{ form.password }}</td>
                         </tr>
                     </table>
-                    </p>
+
+                </p>
                 <p class="bs-component">
                     <center>
                         <input class="btn btn-success btn-sm" type="submit" value="login" />
@@ -36,4 +38,10 @@
             </form>
         </div>
     </div>
+    <script>
+        {% if not user.is_authenticated %}
+            $("ul.nav.navbar-nav.navbar-right").css("display","none");
+        {% endif %}
+    </script>
+
 {% endblock %}

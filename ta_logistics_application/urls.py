@@ -14,5 +14,6 @@ urlpatterns = [
     # Professor Context
     url(r'^professor/$', views.professor_index, name='professor_index'),
     url(r'^professor/create_class', views.professor_create_class, name='professor_create_class'),
+    url(r'^professor/class_applicants', views.professor_class_applicants, name='professor_class_applicants'),
 
 ]

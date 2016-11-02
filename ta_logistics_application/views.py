@@ -9,18 +9,16 @@ from ta_logistics_application.models import Classes, ApplicationFields, DataDefi
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm
 
 
-
 def login(request):
     template = loader.get_template('ta_logistics_application/login.html')
     return HttpResponse(template.render())
 
 
-@login_required(login_url='login/')
+@login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
         if request.user.groups.all()[0].name == "faculty":
-            template = loader.get_template('ta_logistics_application/professor/professor_index.html')
-            return HttpResponse(template.render())
+            return render(request, 'ta_logistics_application/professor/professor_index.html')
         elif request.user.groups.all()[0].name == "student":
             template = loader.get_template('ta_logistics_application/student/index.html')
             return HttpResponse(template.render())
@@ -73,21 +71,17 @@ def student_edit(request):
     return render(request, 'ta_logistics_application/student/edit.html', {'form': form})
 
 
-
-
-
-
 ################ Professor Context ################
-
-
+@login_required(login_url='login')
 def professor_index(request):
     p_id = 1
-    current_class_list = Classes.objects.filter(professor_id=p_id, active_semester='FA16')
+    current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True)
     context = {'current_class_list':current_class_list}
     template = loader.get_template('ta_logistics_application/professor/professor_index.html')
     return render(request, 'ta_logistics_application/professor/professor_index.html', context)
 
 
+@login_required(login_url='login')
 def professor_create_class(request):
     if request.method == 'POST':
         selected_optionals = request.POST.getlist("select_optional_fields")
@@ -108,3 +102,18 @@ def professor_create_class(request):
         'optional_fields': OptionalFieldsForm()
     }
     return render(request, 'ta_logistics_application/professor/create_class.html', context)
+
+
+@login_required(login_url='login')
+def professor_class_applicants(request):
+    data_defs = DataDefinitions()
+    class_id = int(request.GET.urlencode().split('=')[-1])
+    main_student_data, secondary_student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
+
+
+    context = {
+        'main_student_data': main_student_data,
+        'secondary_student_data': secondary_student_data,
+    }
+
+    return render(request, 'ta_logistics_application/professor/professor_class_applicants.html', context)
