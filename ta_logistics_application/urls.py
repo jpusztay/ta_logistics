@@ -1,5 +1,7 @@
 from django.conf.urls import url
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -13,4 +15,4 @@ urlpatterns = [
     url(r'^professor/create_class', views.professor_create_class, name='professor_create_class'),
     url(r'^professor/class_applicants', views.professor_class_applicants, name='professor_class_applicants'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

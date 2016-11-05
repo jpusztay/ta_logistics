@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import validate_comma_separated_integer_list, MaxValueValidator, MinValueValidator
 from ta_logistics_application.validators import validate_optional_field_json
 from collections import OrderedDict
+from django.conf import settings
 import datetime, json
 
 class DataDefinitions():
@@ -109,7 +110,10 @@ class DataDefinitions():
                 opt_field = ApplicationFields.objects.get(id=ident).field_name
                 main_student_data[-1][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
             for field in secondary_data_fields:
-                secondary_student_data[field] = getattr(applicant, field)
+                if field == 'resume':
+                    secondary_student_data[field] = getattr(applicant, field)
+                else:
+                    secondary_student_data[field] = getattr(applicant, field)
             main_student_data[-1]['secondary_student_data'] = secondary_student_data
 
         return main_student_data

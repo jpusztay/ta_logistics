@@ -5,22 +5,30 @@
     $( document ).ready( function () {
 
         function format(d) {
-            console.log(d)
             // `d` is the original data object for the row
             var secondary_table = '<table class="table">' +
                     '<tr>' +
-                    '<td>Full name:</td>' +
-                    '<td>' + d.name + '</td>' +
+                        '<td><b>Personal Statement</b></td>' +
                     '</tr>' +
                     '<tr>' +
-                    '<td>Extension number:</td>' +
-                    '<td>' + d.extn + '</td>' +
+                        '<td>' + d[d.length-2] + '</td>' +
                     '</tr>' +
                     '<tr>' +
-                    '<td>Extra info:</td>' +
-                    '<td>And any further details here (images etc)...</td>' +
+                        '<td><b>Resume</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td id="resume_view">' +
+                            '<embed width="90%" height="1000" src="{{ MEDIA_URL }}/media/' +
+                                d[d.length-1] + '">' +
+                        '</td>' +
+                        '<td id="resume_link" style="display: none;">' +
+                            '<a class="button" href="{{ MEDIA_URL }}/media/' + d[d.length-1] + '">' +
+                                'View Resume' +
+                            '</a>' +
+                        '</td>' +
                     '</tr>' +
                     '</table>';
+            return secondary_table;
         }
 
         var table = $('#professor_applicants_table').DataTable({

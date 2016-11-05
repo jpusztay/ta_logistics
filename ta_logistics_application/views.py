@@ -115,7 +115,6 @@ def professor_create_class(request):
 
 @register.filter
 def get_item(dictionary, key):
-    print(dictionary)
     return dictionary.get(key).items()
 
 
@@ -127,7 +126,6 @@ def professor_class_applicants(request):
         num_cols = len(main_student_data[0])
     else:
         num_cols = 0
-    print(main_student_data)
     context = {
         'main_student_data': main_student_data,
         'num_cols': num_cols,

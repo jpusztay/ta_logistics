@@ -14,7 +14,6 @@ class LoginForm(AuthenticationForm):
                                widget=forms.TextInput(attrs={'class': 'form-control', 'name': 'password'}))
 
 
-
 ################ Student Context ################
 class StudentProfileForm(forms.ModelForm):
 
@@ -95,7 +94,6 @@ class ApplicationForm(forms.Form):
             optional_fields=option_fields_json,
         )
         application.save()
-        print("Save")
 
 
 ################ Professor Context ################
