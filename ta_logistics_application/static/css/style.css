@@ -3,7 +3,11 @@
     color: #DDDDDD;
 }
 
-#optional_field_check{
+#optional_field_check {
     list-style-type: none;
     padding-left: 2%;
+}
+
+#long_table {
+    overflow:auto;
 }
