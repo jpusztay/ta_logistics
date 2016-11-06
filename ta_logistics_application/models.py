@@ -39,13 +39,14 @@ class DataDefinitions():
         ('TEXT', 'Text String'),
         ('INT', 'Integer Number'),
         ('REAL', 'Decimal Number'),
+        ('CMFT', 'Programming Langage Comfort Level')
     )
 
     COMFORT_LVLS = (
         ('Expert','Expert'),
         ('Advanced','Advanced'),
         ('Moderate','Moderate'),
-        ('Novince','Novince'),
+        ('Novince','Novice'),
         ('None','None'),
     )
     APPLICATION_STATUS = (
@@ -141,10 +142,11 @@ class Classes(models.Model):
     is_active = models.BooleanField(default=False)
     selected_optional_field_ids = models.CharField(max_length = 200, validators=[validate_comma_separated_integer_list], null=True)
 
+
 class ClassApplicants(models.Model):
-    #Linked to auto incremented ID of classes table
+    # Linked to auto incremented ID of classes table
     class_id = models.IntegerField()
-    #Linked to auto incremented ID of students table
+    # Linked to auto incremented ID of students table
     student_id = models.IntegerField()
     application_status_id = models.IntegerField(choices=DataDefinitions.APPLICATION_STATUS, default=0)
     hiring_status_id = models.IntegerField(choices=DataDefinitions.HIRING_STATUS, default=0)
@@ -167,4 +169,5 @@ class ApplicationFields(models.Model):
     from_student = models.BooleanField()
     data_type = models.CharField(max_length=6, choices=DataDefinitions.FIELD_TYPE_CHOICES)
     max_length = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(400)])
-
+    #select_options = models.CharField(max_length=500, validators=[validate_optional_field_json], default="")
+    #allow_multiple = models.BooleanField(default=False)
