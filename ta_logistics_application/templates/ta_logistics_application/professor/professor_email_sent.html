@@ -1,0 +1,41 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="page-header">
+        <div class="jumbotron">
+            <h2>Email Status</h2>
+        </div>
+        <div>
+            {% if error_students and students %}
+                <h4>Emails Sent to the Following Students</h4>
+                <ul>
+                    {% for student in students %}
+                        <li>{{ student }}</li>
+                    {% endfor %}
+                </ul>
+                <h4>An Error Occurred While Sending Emails to the Following Students</h4>
+                <ul>
+                    {% for student in error_students %}
+                        <li>{{ student }}</li>
+                    {% endfor %}
+                </ul>
+            {% elif error_students %}
+                <h4>An Error Occurred While Sending Emails to the Following Students</h4>
+                <ul>
+                    {% for student in error_students %}
+                        <li>{{ student }}</li>
+                {% endfor %}
+                </ul>
+            {% elif students %}
+                <h4>Emails Sent to the Following Students</h4>
+                <ul>
+                    {% for student in students %}
+                        <li>{{ student }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No Students Selected</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

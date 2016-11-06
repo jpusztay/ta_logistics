@@ -133,6 +133,8 @@ def get_item(dictionary, key):
 def professor_class_applicants(request):
     class_id = int(request.GET.urlencode().split('=')[-1])
     if request.method == 'POST':
+        error_students = []
+        students = []
         for key, val in request.POST.items():
             if key.startswith("ubit"):
                 ubit_name = key.split("_")[-1]
@@ -172,8 +174,16 @@ def professor_class_applicants(request):
                     email_message.send(fail_silently=False)
                 except:
                     # Return error-sending-email page, status not changed
-                    break;
+                    error_students.append(ubit_name)
+
+                if not ubit_name in error_students:
+                    students.append(ubit_name)
                 application_entry.save()
+        context = {
+            'students': students,
+            'error_students': error_students,
+        }
+        return render(request, 'ta_logistics_application/professor/professor_email_sent.html', context)
 
     data_defs = DataDefinitions()
     main_student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
