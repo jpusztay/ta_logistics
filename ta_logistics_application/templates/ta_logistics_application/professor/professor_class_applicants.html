@@ -1,6 +1,7 @@
 {% extends 'ta_logistics_application/base.html' %}
 
 {% block content %}
+    <!-- WE NEED TO PUT THIS IN MAIN.JS  SOMEHOW!!!!!-->
     <script type="text/javascript" language="javascript" class="init">
     $( document ).ready( function () {
 
@@ -32,9 +33,20 @@
         }
 
         var table = $('#professor_applicants_table').DataTable({
-            "paging": false,
-            "info": false,
-            "searching": false
+            paging: false,
+            info: false,
+            searching: false,
+            order: [[ 2, "desc" ]],
+            aoColumnDefs: [
+                {
+                    'bSortable': false,
+                    'aTargets' : [ 0, 1 ]
+                }
+            ],
+            columnDefs: [
+                { width: 100, targets: 0 }
+            ],
+
         });
 
         $('#professor_applicants_table tbody').on('click', 'td.details-control', function () {
@@ -49,7 +61,14 @@
             else {
                 // Open this row
                 row.child(format(row.data())).show();
-                tr.addClass('shown');
+                 if( $(window).width() >= 992 ) {
+                    $('#resume_view').show();
+                    $('#resume_link').hide();
+                }
+                if( $(window).width() < 992 ) {
+                    $('#resume_view').hide();
+                    $('#resume_link').show();
+                }
             }
         });
     });
@@ -61,11 +80,14 @@
         </div>
         <div>
             {% if main_student_data %}
+            <form id="button_form" method="post">
+                {% csrf_token %}
                 <div id="long_table">
                     <table class="table display" id="professor_applicants_table">
                         <thead>
                             <tr role="row">
-                                <th class="details-control sorting_disabled"></th>
+                                <th class="details-control">+/-</th>
+                                <th><input name="select_all" value="1" id="select-all" type="checkbox" /></th>
                                 {% for key, value in main_student_data.0.items %}
                                     {% ifnotequal key "secondary_student_data" %}
                                         <th>{{ key }}</th>
@@ -80,7 +102,8 @@
                         <tbody>
                             {% for applicant in main_student_data %}
                                 <tr>
-                                    <td class=" details-control" id="secondary_button_{{ forloop.counter0 }}"></td>
+                                    <td class=" details-control"></td>
+                                    <td><input name="ubit_{{ applicant.ubit_name }}" value="" class="select-applicant" type="checkbox" /></td>
                                     {% for key, value in applicant.items %}
                                         {% ifnotequal key "secondary_student_data" %}
                                             <td>{{ value }}</td>
@@ -96,6 +119,13 @@
                         </tbody>
                     </table>
                 </div>
+                <div>
+                    <button class="btn btn-primary" type="submit" form="button_form" name="interview">Interview Selected</button>
+                    <button class="btn btn-success" type="submit" form="button_form" name="hired">Hire Selected!</button>
+                    <button class="btn btn-info" type="submit" form="button_form" name="wait_listed">Wait List Selected</button>
+                    <button class="btn btn-danger" type="submit" form="button_form" name="reject">Reject Selected</button>
+                </div>
+            </form>
             {% else %}
                 <p>No Applicants Yet</p>
             {% endif %}

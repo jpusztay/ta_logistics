@@ -6,8 +6,21 @@ from django.template.defaulttags import register
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions
+from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm
+from django.core.mail import send_mail, EmailMessage
+
+
+# CONSTANTS GO HERE
+APP_SUBMITTED = 0
+APP_PENDING = 1
+APP_COMPLETE = 2
+
+HIRE_REVIEW = 0
+HIRE_REJECT = 1
+HIRE_INTERVIEW = 2
+HIRE_ACCEPT = 3
+HIRE_WAIT = 4
 
 
 def login(request):
@@ -118,8 +131,51 @@ def get_item(dictionary, key):
 
 @login_required(login_url='login')
 def professor_class_applicants(request):
-    data_defs = DataDefinitions()
     class_id = int(request.GET.urlencode().split('=')[-1])
+    if request.method == 'POST':
+        for key, val in request.POST.items():
+            if key.startswith("ubit"):
+                ubit_name = key.split("_")[-1]
+                email_address = ubit_name + '@buffalo.edu'
+                student_id = Students.objects.get(ubit_name=ubit_name).id
+                application_entry = ClassApplicants.objects.get(student_id=student_id, class_id=class_id)
+                request_list = list(request.POST.keys())
+                if 'interview' in request_list:
+                    application_entry.application_status_id = APP_PENDING
+                    application_entry.hiring_status_id = HIRE_INTERVIEW
+                    subject = "You've been selected for an interview!"
+                    body = "You've been selected for an interview!"
+                elif 'hired' in request_list:
+                    application_entry.application_status_id = APP_COMPLETE
+                    application_entry.hiring_status_id = HIRE_ACCEPT
+                    subject = "You've been selected for an interview!"
+                    body = "You've been selected for an interview!"
+                elif 'wait_listed' in request_list:
+                    application_entry.application_status_id = APP_PENDING
+                    application_entry.hiring_status_id = HIRE_WAIT
+                    subject = "You've been selected for an interview!"
+                    body = "You've been selected for an interview!"
+                elif 'reject' in request_list:
+                    application_entry.application_status_id = APP_COMPLETE
+                    application_entry.hiring_status_id = HIRE_REJECT
+                    subject = "You've been selected for an interview!"
+                    body = "You've been selected for an interview!"
+                else:
+                    break
+                email_message = EmailMessage(
+                    subject,
+                    body,
+                    'cse442.talogistics@gmail.com',
+                    [email_address],
+                )
+                try:
+                    email_message.send(fail_silently=False)
+                except:
+                    # Return error-sending-email page, status not changed
+                    break;
+                application_entry.save()
+
+    data_defs = DataDefinitions()
     main_student_data = data_defs.getStudentDataForApplicantsView(class_id=class_id)
     if main_student_data:
         num_cols = len(main_student_data[0])
