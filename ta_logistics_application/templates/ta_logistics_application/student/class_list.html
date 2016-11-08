@@ -1,0 +1,14 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="jumbotron">
+            <h2>List of Classes</h2>
+        </div>
+        <div class = "row">
+            <p> This page will display a list of classes that are being offered to TA. Student will select one and  then be brought to the application Form.</p>
+
+            <a href="{% url 'student_application' %}" class="btn btn-primary">Temporary Application Button</a>
+        </div>
+    </div>
+{% endblock %}

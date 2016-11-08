@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from ta_logistics_application.models import Classes, ApplicationFields, DataDefinitions
+from ta_logistics_application.models import Classes, ApplicationFields, DataDefinitions, Status
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm
 
 
@@ -22,19 +22,47 @@ def group_index(request):
             template = loader.get_template('ta_logistics_application/professor/professor_index.html')
             return HttpResponse(template.render())
         elif request.user.groups.all()[0].name == "student":
-            template = loader.get_template('ta_logistics_application/student/index.html')
+            template = loader.get_template('ta_logistics_application/student/profile.html')
             return HttpResponse(template.render())
 
 
 ################ Student Context ################
 
-def student_index(request):
 
-    return render(request, 'ta_logistics_application/student/index.html')
+def student_profile(request):
+    # This view will be shown to students the first time they login to the app
+    # or if you then want to edit any information in their profile.
+    #Will eventually retrieve data to show which student has applied to what class
+
+    if request.method == 'POST':
+        form = StudentProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # file is saved
+            form.save()
+            template = loader.get_template('ta_logistics_application/student/submission_received.html')
+            return HttpResponse(template.render())
+    else:
+        form = StudentProfileForm()
+    return render(request, 'ta_logistics_application/student/profile.html', {'form': form})
+
+
+def student_status(request):
+    # This view will retrieve the classes that the current student applied to
+
+    applied_classes = Status.objects.filter(ubit_name='fgpinnoc')
+    context = {'applied_classes': applied_classes}
+    return render(request, 'ta_logistics_application/student/status.html', context)
+
+
+
+def student_class_list(request):
+    #This view will retrive all the possible classes offered to TA
+
+    return render(request, 'ta_logistics_application/student/class_list.html')
 
 # Finish when student index is finished
 # Get s_id and c_id parts working
-def student_apply(request):#, c_id, s_id):
+def student_application(request, class_id=None):#, c_id, s_id):
     c_id = 6
     s_id = 1
     if request.method == 'POST':
@@ -45,33 +73,7 @@ def student_apply(request):#, c_id, s_id):
             return HttpResponse(template.render())
 
     form = ApplicationForm(class_id=c_id, student_id=s_id)
-    return render(request, 'ta_logistics_application/student/apply.html', {'form': form})
-
-
-def student_create(request):
-    if request.method == 'POST':
-        form = StudentProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            # file is saved
-            form.save()
-            template = loader.get_template('ta_logistics_application/student/submission_received.html')
-            return HttpResponse(template.render())
-    else:
-        form = StudentProfileForm()
-    return render(request, 'ta_logistics_application/student/create.html', {'form': form})
-
-
-def student_edit(request):
-    if request.method == 'POST':
-        form = StudentProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            template = loader.get_template('ta_logistics_application/student/edit.html')
-            return HttpResponse(template.render())
-    else:
-        form = StudentProfileForm()
-    return render(request, 'ta_logistics_application/student/edit.html', {'form': form})
-
+    return render(request, 'ta_logistics_application/student/application.html', {'form': form})
 
 
 
