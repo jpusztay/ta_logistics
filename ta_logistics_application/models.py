@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import validate_comma_separated_integer_list, MaxValueValidator, MinValueValidator
 from ta_logistics_application.validators import validate_optional_field_json
 from collections import OrderedDict
+from django.conf import settings
 import datetime, json
 
 class DataDefinitions():
@@ -38,13 +39,14 @@ class DataDefinitions():
         ('TEXT', 'Text String'),
         ('INT', 'Integer Number'),
         ('REAL', 'Decimal Number'),
+        ('CMFT', 'Programming Language Comfort Level')
     )
 
     COMFORT_LVLS = (
         ('Expert','Expert'),
         ('Advanced','Advanced'),
         ('Moderate','Moderate'),
-        ('Novince','Novince'),
+        ('Novince','Novice'),
         ('None','None'),
     )
     APPLICATION_STATUS = (
@@ -93,25 +95,29 @@ class DataDefinitions():
         secondary_student_data = []
         optional_field_ids = list(map(int, Classes.objects.get(id=class_id).selected_optional_field_ids.split(',')))
         for applicant in raw_applicant_data:
-            index = len(main_student_data)
             main_student_data.append(OrderedDict())
-            secondary_student_data.append(OrderedDict())
+            secondary_student_data = OrderedDict()
             for field in main_data_fields:
                 if field == 'hiring_status':
                     for tup in self.HIRING_STATUS:
                         id, name = tup
                         if id == applicant.hiring_status_id:
-                            main_student_data[index][field] = name
+                            main_student_data[-1][field] = name
                             break
                 else:
-                    main_student_data[index][field] = getattr(applicant, field)
+                    main_student_data[-1][field] = getattr(applicant, field)
             optional_field_data = json.loads(applicant.optional_fields)
             for ident in optional_field_ids:
                 opt_field = ApplicationFields.objects.get(id=ident).field_name
-                main_student_data[index][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
+                main_student_data[-1][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
             for field in secondary_data_fields:
-                secondary_student_data[index][field] = getattr(applicant, field)
-        return main_student_data, secondary_student_data
+                if field == 'resume':
+                    secondary_student_data[field] = getattr(applicant, field)
+                else:
+                    secondary_student_data[field] = getattr(applicant, field)
+            main_student_data[-1]['secondary_student_data'] = secondary_student_data
+
+        return main_student_data
 
 
 class Students(models.Model):
@@ -136,10 +142,11 @@ class Classes(models.Model):
     is_active = models.BooleanField(default=False)
     selected_optional_field_ids = models.CharField(max_length = 200, validators=[validate_comma_separated_integer_list], null=True)
 
+
 class ClassApplicants(models.Model):
-    #Linked to auto incremented ID of classes table
+    # Linked to auto incremented ID of classes table
     class_id = models.IntegerField()
-    #Linked to auto incremented ID of students table
+    # Linked to auto incremented ID of students table
     student_id = models.IntegerField()
     application_status_id = models.IntegerField(choices=DataDefinitions.APPLICATION_STATUS, default=0)
     hiring_status_id = models.IntegerField(choices=DataDefinitions.HIRING_STATUS, default=0)
@@ -158,8 +165,8 @@ class Professors(models.Model):
 class ApplicationFields(models.Model):
     field_name = models.CharField(max_length=30)
     field_text = models.CharField(max_length=30)
-    is_default = models.BooleanField()
-    from_student = models.BooleanField()
+    is_default = models.BooleanField(default=0)
+    from_student = models.BooleanField(default=0)
     data_type = models.CharField(max_length=6, choices=DataDefinitions.FIELD_TYPE_CHOICES)
-    max_length = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(400)])
-
+    max_length = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)], default=0)
+    select_options = models.CharField(max_length=500, default="")

@@ -1,0 +1,31 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/js/view_optional_fields.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <div class="jumbotron">
+            <h2>Optional Fields</h2>
+        </div>
+        <div>
+            <p style="display:none;" id="edit_warning">You must select a field to edit.</p>
+            <form id="button_form" method="post">
+                {% csrf_token %}
+                {% if fields %}
+                    <ul>
+                    {% for field in fields %}
+                        <li><input name="id_{{ field.id }}" value="" class="optional_field" type="checkbox" /> {{ field.field_text }} </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No Optional Fields</p>
+                {% endif %}
+                <button class="btn btn-primary" type="submit" form="button_form" name="create">Create New</button>
+                <button class="btn btn-success" type="submit" form="button_form" id="edit_optional_button" name="edit">Edit Selected</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
