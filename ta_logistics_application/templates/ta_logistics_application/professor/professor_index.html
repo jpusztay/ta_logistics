@@ -1,5 +1,10 @@
 {% extends 'ta_logistics_application/base.html' %}
 
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/js/professor_index.js"></script>
+{% endblock %}
+
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">

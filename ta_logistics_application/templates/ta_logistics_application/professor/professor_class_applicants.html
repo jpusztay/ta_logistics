@@ -1,5 +1,10 @@
 {% extends 'ta_logistics_application/base.html' %}
 
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/js/professor_class_applicants.js"></script>
+{% endblock %}
+
 {% block content %}
     <!-- WE NEED TO PUT THIS IN MAIN.JS  SOMEHOW!!!!!-->
     <script type="text/javascript" language="javascript" class="init">

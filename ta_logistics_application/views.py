@@ -6,9 +6,10 @@ from django.template.defaulttags import register
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students
-from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm
+from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
+from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm
 from django.core.mail import send_mail, EmailMessage
+import re
 
 
 # CONSTANTS GO HERE
@@ -150,18 +151,18 @@ def professor_class_applicants(request):
                 elif 'hired' in request_list:
                     application_entry.application_status_id = APP_COMPLETE
                     application_entry.hiring_status_id = HIRE_ACCEPT
-                    subject = "You've been selected for an interview!"
-                    body = "You've been selected for an interview!"
+                    subject = "Congratulations, You've been Hired!"
+                    body = "Congratulations, You've been Hired!"
                 elif 'wait_listed' in request_list:
                     application_entry.application_status_id = APP_PENDING
                     application_entry.hiring_status_id = HIRE_WAIT
-                    subject = "You've been selected for an interview!"
-                    body = "You've been selected for an interview!"
+                    subject = "Application Pending"
+                    body = "Application Pending"
                 elif 'reject' in request_list:
                     application_entry.application_status_id = APP_COMPLETE
                     application_entry.hiring_status_id = HIRE_REJECT
-                    subject = "You've been selected for an interview!"
-                    body = "You've been selected for an interview!"
+                    subject = "Sorry"
+                    body = "Sorry"
                 else:
                     break
                 email_message = EmailMessage(
@@ -197,3 +198,62 @@ def professor_class_applicants(request):
     }
 
     return render(request, 'ta_logistics_application/professor/professor_class_applicants.html', context)
+
+
+@login_required(login_url='login')
+def view_optional_fields(request):
+    if request.method == 'POST':
+        request_list = list(request.POST.keys())
+        if 'edit' in request_list:
+            field_id = -1
+            for key, val in request.POST.items():
+                if key.startswith('id_'):
+                    field_id = key.split('_')[-1]
+                    return redirect('edit_optional_field.html?field_id=' + field_id)
+        elif 'create' in request_list:
+            return redirect('add_optional_field.html')
+    fields = ApplicationFields.objects.filter(is_default=False)
+    context = {
+        'fields': fields,
+    }
+    return render(request, 'ta_logistics_application/professor/view_optional_fields.html', context)
+
+
+@login_required(login_url='login')
+def edit_optional_field(request):
+    field_id = int(request.GET.urlencode().split('=')[-1])
+    if request.method == 'POST':
+        post = request.POST.copy()
+        field_text = post.get('field_text')
+        max_length = post.get('max_length')
+        select_options = post.get('select_options')
+        field = ApplicationFields.objects.get(id=field_id)
+        field.field_text = field_text
+        field.max_length = max_length
+        field.select_options = select_options
+        field.save()
+        return redirect('view_optional_fields.html')
+    field = dict(ApplicationFields.objects.get(id=field_id).__dict__)
+    form = AddOptionalFieldForm(initial=field)
+    return render(request, 'ta_logistics_application/professor/edit_optional_field.html', {'form': form})
+
+
+@login_required(login_url='login')
+def add_optional_field(request):
+    if request.method == 'POST':
+        post = request.POST.copy()
+        field_text = post.get('field_text')
+        mutable = post._mutable
+        post._mutable = True
+        post['field_name'] = re.sub('[^A-Za-z0-9]+', '', field_text)
+        post._mutable = mutable
+        form = AddOptionalFieldForm(post)
+        if form.is_valid():
+            # file is saved
+            form.save()
+            return redirect('view_optional_fields.html')
+        else:
+            print(form.errors)
+
+    form = AddOptionalFieldForm()
+    return render(request, 'ta_logistics_application/professor/add_optional_field.html', {'form': form})

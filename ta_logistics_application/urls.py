@@ -13,6 +13,9 @@ urlpatterns = [
     # Professor Context
     url(r'^professor/$', views.professor_index, name='professor_index'),
     url(r'^professor/create_class', views.professor_create_class, name='professor_create_class'),
-    url(r'^professor/class_applicants', views.professor_class_applicants, name='professor_class_applicants'),
+    url(r'^professor/professor_class_applicants', views.professor_class_applicants, name='professor_class_applicants'),
+    url(r'^professor/add_optional_field', views.add_optional_field, name='add_optional_field'),
+    url(r'^professor/edit_optional_field', views.edit_optional_field, name='edit_optional_field'),
+    url(r'^professor/view_optional_fields', views.view_optional_fields, name='view_optional_fields'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

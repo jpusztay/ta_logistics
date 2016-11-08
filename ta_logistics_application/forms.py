@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
-from .models import Students, Classes, ApplicationFields, ClassApplicants, DataDefinitions
+from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields
 
 
 #String Constants go HERE:
@@ -123,7 +123,6 @@ class CreateClassForm(forms.ModelForm):
             'available_hours': 'Hours Available in Budget (Total for Semester)',
         }
 
-
     def __init__(self, *args, **kwargs):
         super(CreateClassForm, self).__init__(*args, **kwargs)
         for field in iter(self.fields):
@@ -136,9 +135,38 @@ class OptionalFieldsForm(forms.Form):
     data_defs = DataDefinitions()
     select_optional_fields = forms.MultipleChoiceField(
         choices = data_defs.getOptionalFields(),
-        widget  = forms.CheckboxSelectMultiple,
+        widget = forms.CheckboxSelectMultiple,
     )
     select_optional_fields.widget.attrs.update({
                 'class': 'optional_field_check',
                 'id': 'optional_field_check'
+            })
+
+
+class AddOptionalFieldForm(forms.ModelForm):
+    class Meta:
+        data_defs = DataDefinitions()
+        model = ApplicationFields
+        fields = ['field_name', 'field_text', 'data_type', 'select_options', 'max_length']
+
+        widgets = {
+            'field_name': forms.HiddenInput(),
+            'field_text': forms.TextInput(attrs={'placeholder': 'e.g. C++ Comfort Level'}),
+            'data_type': forms.Select(choices=data_defs.FIELD_TYPE_CHOICES),
+            'max_length': forms.NumberInput(attrs={'placeholder': 'Integer between 1 and 400', 'initial': ''}, ),
+            'select_options': forms.Textarea(attrs={'placeholder': 'Enter coma separated options if you\'d like student to chose from them', 'required': False},),
+        }
+        labels = {
+            'field_text': 'Field Title',
+            'data_type': 'Data Type',
+            'select_options': 'Select Options',
+            'max_length': 'Max Length/Size',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AddOptionalFieldForm, self).__init__(*args, **kwargs)
+        self.fields['select_options'].required = False
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
             })

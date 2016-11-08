@@ -39,7 +39,7 @@ class DataDefinitions():
         ('TEXT', 'Text String'),
         ('INT', 'Integer Number'),
         ('REAL', 'Decimal Number'),
-        ('CMFT', 'Programming Langage Comfort Level')
+        ('CMFT', 'Programming Language Comfort Level')
     )
 
     COMFORT_LVLS = (
@@ -165,9 +165,8 @@ class Professors(models.Model):
 class ApplicationFields(models.Model):
     field_name = models.CharField(max_length=30)
     field_text = models.CharField(max_length=30)
-    is_default = models.BooleanField()
-    from_student = models.BooleanField()
+    is_default = models.BooleanField(default=0)
+    from_student = models.BooleanField(default=0)
     data_type = models.CharField(max_length=6, choices=DataDefinitions.FIELD_TYPE_CHOICES)
-    max_length = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(400)])
-    #select_options = models.CharField(max_length=500, validators=[validate_optional_field_json], default="")
-    #allow_multiple = models.BooleanField(default=False)
+    max_length = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)], default=0)
+    select_options = models.CharField(max_length=500, default="")
