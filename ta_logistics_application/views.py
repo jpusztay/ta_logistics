@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 import re
 from django.core.mail import send_mail, EmailMessage
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm
-from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
+from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields, Status
 
 
 # CONSTANTS GO HERE
