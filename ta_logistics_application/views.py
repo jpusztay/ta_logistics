@@ -23,7 +23,7 @@ HIRE_INTERVIEW = 2
 HIRE_ACCEPT = 3
 HIRE_WAIT = 4
 
-
+## Auth Stuff
 def login(request):
     template = loader.get_template('ta_logistics_application/login.html')
     return HttpResponse(template.render())
@@ -38,6 +38,19 @@ def group_index(request):
             template = loader.get_template('ta_logistics_application/student/profile.html')
             return HttpResponse(template.render())
 
+
+def create_account(request):
+    if request.method == "POST":
+        form = StudentProfileForm(request.POST, request.FILES)
+        if form.is_valid:
+            form.save()
+            email = form.ubit_name + "@buffalo.edu"
+            user = User.object.create_user(username=form.ubit_name, email=email, first_name=form.first_name, last_name=form.last_name)
+            send_email(email, 'Use %s to confirm your email' % user.confirmation_key)
+
+            template =  loader.get_template('ta_logistics_application/student/submission_received.html')
+            return HttpResponse(template.render)
+    return render(request, 'ta_logistics_application/student/create_account.html')
 
 ################ Student Context ################
 
