@@ -76,8 +76,8 @@ def student_class_list(request):
 # Finish when student index is finished
 # Get s_id and c_id parts working
 def student_application(request, class_id=None):#, c_id, s_id):
-    c_id = 6
-    s_id = 1
+    c_id = 13
+    s_id = request.user.id
     if request.method == 'POST':
         form = ApplicationForm(request.POST, class_id=c_id, student_id=s_id)
         if form.is_valid():
@@ -91,7 +91,8 @@ def student_application(request, class_id=None):#, c_id, s_id):
 ################ Professor Context ################
 @login_required(login_url='login')
 def professor_index(request):
-    p_id = 1
+    p_id = request.user.id
+    print(str(p_id))
     current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True).values()
     for current_class in current_class_list:
         current_class['applicant_count'] = ClassApplicants.objects.filter(class_id=current_class['id']).count()
@@ -226,14 +227,20 @@ def edit_optional_field(request):
         post = request.POST.copy()
         field_text = post.get('field_text')
         max_length = post.get('max_length')
-        select_options = post.get('select_options')
+        select_options_str = post.get('select_options')
+        select_options = select_options_str.split('\r\n')
+        for opts in select_options:
+            opts = re.sub(' +', ' ', opts)
         field = ApplicationFields.objects.get(id=field_id)
         field.field_text = field_text
         field.max_length = max_length
-        field.select_options = select_options
+        field.select_options = ','.join(select_options)
         field.save()
         return redirect('view_optional_fields.html')
     field = dict(ApplicationFields.objects.get(id=field_id).__dict__)
+    select_options_str = field['select_options']
+    select_options = select_options_str.split(',')
+    field['select_options'] = '\r\n'.join(select_options)
     form = AddOptionalFieldForm(initial=field)
     return render(request, 'ta_logistics_application/professor/edit_optional_field.html', {'form': form})
 
@@ -243,10 +250,16 @@ def add_optional_field(request):
     if request.method == 'POST':
         post = request.POST.copy()
         field_text = post.get('field_text')
+        select_options_str = post.get('select_options')
+        select_options = select_options_str.split('\r\n')
+        for opts in select_options:
+            opts = re.sub(' +', ' ', opts)
         mutable = post._mutable
         post._mutable = True
+        post['select_options'] = ','.join(select_options)
         post['field_name'] = re.sub('[^A-Za-z0-9]+', '', field_text)
         post._mutable = mutable
+        print(post)
         form = AddOptionalFieldForm(post)
         if form.is_valid():
             # file is saved

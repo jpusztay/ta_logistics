@@ -1,5 +1,13 @@
 $( document ).ready( function () {
 
+    $('#id_select_options').change(function () {
+       if($('#id_select_options').val() != ""){
+           $("#id_max_length").parent().hide();
+       } else {
+           $("#id_max_length").parent().show();
+       }
+    });
+
     $('#id_data_type').change(function () {
         if ($('#id_data_type').val() == "TEXT") {
             $("#id_max_length").parent().show();
