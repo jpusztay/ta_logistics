@@ -130,9 +130,10 @@ DEFAULT_FROM_EMAIL = 'testing@testing.com'
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/home'
 
-### Account activation stuff for django-registration
+# Account activation stuff for django-registration
+# You will have 7 days to activate or it won't work, you default to student
 ACCOUNT_ACTIVATION_DAYS = 7
-
+REGISTRATION_DEFAULT_GROUP_NAME = "student"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
