@@ -77,7 +77,7 @@ def student_class_list(request):
 # Get s_id and c_id parts working
 def student_application(request, class_id=None):#, c_id, s_id):
     c_id = 13
-    s_id = 1
+    s_id = request.user.id
     if request.method == 'POST':
         form = ApplicationForm(request.POST, class_id=c_id, student_id=s_id)
         if form.is_valid():
