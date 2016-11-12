@@ -1,5 +1,10 @@
 {% extends 'ta_logistics_application/base.html' %}
 
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/js/professor_index.js"></script>
+{% endblock %}
+
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
@@ -7,7 +12,7 @@
         </div>
         <div>
             {% if current_class_list %}
-                <table class = 'table'>
+                <table class = 'table display' id="professor_class_table">
                     <thead>
                         <tr>
                             <th>Class ID</th>
@@ -18,9 +23,9 @@
                     <tbody>
                     {% for class in current_class_list %}
                         <tr>
-                            <td>{{ class.class_listing_id }}</td>
+                            <td><a href="{% url 'professor_class_applicants'%}?class_id={{ class.id }}">{{ class.class_listing_id }}</a></td>
                             <td>{{ class.class_name }}</td>
-                            <td></td>
+                            <td>{{ class.applicant_count }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

@@ -1,11 +1,17 @@
 {% extends 'ta_logistics_application/base.html' %}
 
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/js/edit_optional_field.js"></script>
+{% endblock %}
+
+
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>Create Account</h2>
+            <h2>Edit Optional Field</h2>
         </div>
-        <div>
+        <div class="footnotes">
             <form method="post" action ="" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}

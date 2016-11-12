@@ -63,7 +63,9 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                #'django.core.context_processors.media',
                 'django.contrib.messages.context_processors.messages',
+
             ],
         },
     },
@@ -115,7 +117,18 @@ USE_L10N = True
 
 USE_TZ = True
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'cse442.talogistics@gmail.com'
+# EMAIL_HOST_PASSWORD = 'talogistics123'
+# DEFAULT_FROM_EMAIL = 'testing@testing.com'
+
 # tell it where to redirect, go home after login makes sense to me.
+LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/home'
 
 # Static files (CSS, JavaScript, Images)
