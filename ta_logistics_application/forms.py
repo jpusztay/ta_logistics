@@ -15,6 +15,7 @@ class LoginForm(AuthenticationForm):
                                widget=forms.PasswordInput(attrs={'class': 'form-control', 'name': 'password'}))
 
 
+
 ################ Student Context ################
 class StudentProfileForm(forms.ModelForm):
 

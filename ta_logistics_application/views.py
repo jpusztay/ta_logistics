@@ -39,22 +39,6 @@ def group_index(request):
             return HttpResponse(template.render())
 
 
-def create_account(request):
-    if request.method == "POST":
-        form = StudentProfileForm(request.POST, request.FILES)
-        if form.is_valid:
-            form.save()
-            email = form.ubit_name + "@buffalo.edu"
-            user = User.object.create_user(username=form.ubit_name, email=email, first_name=form.first_name, last_name=form.last_name)
-            send_email(email, 'Use %s to confirm your email' % user.confirmation_key)
-
-            template =  loader.get_template('ta_logistics_application/student/submission_received.html')
-            return HttpResponse(template.render)
-    return render(request, 'ta_logistics_application/student/create_account.html')
-
-################ Student Context ################
-
-
 def student_profile(request):
     # This view will be shown to students the first time they login to the app
     # or if you then want to edit any information in their profile.
