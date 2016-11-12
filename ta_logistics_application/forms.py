@@ -64,12 +64,33 @@ class ApplicationForm(forms.Form):
             data_type = new_field.data_type
             self.field_text_list[new_field.field_name] = data_type
             if data_type == data_defs.INT_FIELD:
-                self.fields[new_field.field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder': new_field.field_text}))
+                if new_field.select_options != '':
+                    choice_list = new_field.select_options.split(',')
+                    choices = ()
+                    for item in choice_list:
+                        choices = choices + ((item, item),)
+                    self.fields[new_field.field_name] = forms.ChoiceField(choices=choices)
+                else:
+                    self.fields[new_field.field_name] = forms.IntegerField(widget=forms.NumberInput(attrs={'placeholder': new_field.field_text}))
                 self.fields[new_field.field_name].label = new_field.field_text
             elif data_type == data_defs.FLOAT_FIELD:
-                self.fields[new_field.field_name] = forms.FloatField(label=new_field.field_text)
+                if new_field.select_options != '':
+                    choice_list = new_field.select_options.split(',')
+                    choices = ()
+                    for item in choice_list:
+                        choices = choices + ((item, item),)
+                    self.fields[new_field.field_name] = forms.ChoiceField(choices=choices)
+                else:
+                    self.fields[new_field.field_name] = forms.FloatField(label=new_field.field_text)
             elif data_type == data_defs.TEXT_FIELD:
-                self.fields[new_field.field_name] = forms.TextInput(attrs={'placeholder': new_field.field_text})
+                if new_field.select_options != '':
+                    choice_list = new_field.select_options.split(',')
+                    choices = ()
+                    for item in choice_list:
+                        choices = choices + ((item, item),)
+                    self.fields[new_field.field_name] = forms.ChoiceField(choices=choices)
+                else:
+                    self.fields[new_field.field_name] = forms.TextInput(attrs={'placeholder': new_field.field_text})
                 self.fields[new_field.field_name].label = new_field.field_text
             elif data_type == data_defs.COMFORT_LVL_FIELD:
                 self.fields[new_field.field_name] = forms.ChoiceField(choices=data_defs.COMFORT_LVLS)
@@ -154,7 +175,7 @@ class AddOptionalFieldForm(forms.ModelForm):
             'field_text': forms.TextInput(attrs={'placeholder': 'e.g. C++ Comfort Level'}),
             'data_type': forms.Select(choices=data_defs.FIELD_TYPE_CHOICES),
             'max_length': forms.NumberInput(attrs={'placeholder': 'Integer between 1 and 400', 'initial': ''}, ),
-            'select_options': forms.Textarea(attrs={'placeholder': 'Enter coma separated options if you\'d like student to chose from them', 'required': False},),
+            'select_options': forms.Textarea(attrs={'placeholder': 'Enter values for students to select from. Put one on each line. For example:\nBad\nNeutral\nGood', 'required': False},),
         }
         labels = {
             'field_text': 'Field Title',

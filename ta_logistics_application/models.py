@@ -5,6 +5,7 @@ from collections import OrderedDict
 from django.conf import settings
 import datetime, json
 
+
 class DataDefinitions():
     BOOL_YES_NO = (
         (1, 'Yes'),
@@ -121,6 +122,7 @@ class DataDefinitions():
 
 
 class Students(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True)
     ubit_name = models.CharField(max_length=10)
     person_number = models.CharField(max_length=8)
     first_name = models.CharField(max_length=30)
@@ -157,6 +159,7 @@ class ClassApplicants(models.Model):
 
 
 class Professors(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True)
     ubit_name = models.CharField(max_length=10)
     first_name = models.CharField(max_length=15)
     last_name = models.CharField(max_length=15)
