@@ -5,6 +5,7 @@ from collections import OrderedDict
 from django.conf import settings
 import datetime, json
 
+
 class DataDefinitions():
     BOOL_YES_NO = (
         (1, 'Yes'),

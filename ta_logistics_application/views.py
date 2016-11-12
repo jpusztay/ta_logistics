@@ -80,7 +80,7 @@ def student_class_list(request):
 # Finish when student index is finished
 # Get s_id and c_id parts working
 def student_application(request, class_id=None):#, c_id, s_id):
-    c_id = 6
+    c_id = 13
     s_id = 1
     if request.method == 'POST':
         form = ApplicationForm(request.POST, class_id=c_id, student_id=s_id)
@@ -230,14 +230,20 @@ def edit_optional_field(request):
         post = request.POST.copy()
         field_text = post.get('field_text')
         max_length = post.get('max_length')
-        select_options = post.get('select_options')
+        select_options_str = post.get('select_options')
+        select_options = select_options_str.split('\r\n')
+        for opts in select_options:
+            opts = re.sub(' +', ' ', opts)
         field = ApplicationFields.objects.get(id=field_id)
         field.field_text = field_text
         field.max_length = max_length
-        field.select_options = select_options
+        field.select_options = ','.join(select_options)
         field.save()
         return redirect('view_optional_fields.html')
     field = dict(ApplicationFields.objects.get(id=field_id).__dict__)
+    select_options_str = field['select_options']
+    select_options = select_options_str.split(',')
+    field['select_options'] = '\r\n'.join(select_options)
     form = AddOptionalFieldForm(initial=field)
     return render(request, 'ta_logistics_application/professor/edit_optional_field.html', {'form': form})
 
@@ -247,10 +253,16 @@ def add_optional_field(request):
     if request.method == 'POST':
         post = request.POST.copy()
         field_text = post.get('field_text')
+        select_options_str = post.get('select_options')
+        select_options = select_options_str.split('\r\n')
+        for opts in select_options:
+            opts = re.sub(' +', ' ', opts)
         mutable = post._mutable
         post._mutable = True
+        post['select_options'] = ','.join(select_options)
         post['field_name'] = re.sub('[^A-Za-z0-9]+', '', field_text)
         post._mutable = mutable
+        print(post)
         form = AddOptionalFieldForm(post)
         if form.is_valid():
             # file is saved
