@@ -91,7 +91,8 @@ def student_application(request, class_id=None):#, c_id, s_id):
 ################ Professor Context ################
 @login_required(login_url='login')
 def professor_index(request):
-    p_id = 1
+    p_id = request.user.id
+    print(str(p_id))
     current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True).values()
     for current_class in current_class_list:
         current_class['applicant_count'] = ClassApplicants.objects.filter(class_id=current_class['id']).count()
