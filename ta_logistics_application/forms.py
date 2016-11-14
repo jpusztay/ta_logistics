@@ -16,6 +16,16 @@ class LoginForm(AuthenticationForm):
 
 
 ################ Student Context ################
+class ClassListForm(forms.Form):
+    """
+    This form will simply show a dropdown of available classes.
+    """
+
+    class_list = forms.ModelChoiceField(queryset=Classes.objects.values())
+    print(class_list)
+
+
+
 class StudentProfileForm(forms.ModelForm):
 
     class Meta:
