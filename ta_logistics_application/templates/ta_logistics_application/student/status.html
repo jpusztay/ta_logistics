@@ -5,36 +5,37 @@
         <div class="jumbotron">
             <h2>Status Page</h2>
         </div>
-
-    {% if applied_classes %}
-        <div class="row">
-            <div class="table-responsive">
-                <table class = "table">
-                    <thead>
-                        <tr>
-                            <th>Semester</th>
-                            <th>Class ID</th>
-                            <th>Class Name</th>
-                            <th>Application Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for class in applied_classes %}
-                            <tr>
-                                <td>{{ class.semester}}</td>
-                                <td>{{ class.class_id}}</td>
-                                <td>{{ class.class_name}}</td>
-                                <td>{{ class.application_status}}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>You haven't applied to any classes yet. When you do they will show up here.</p>
-            {% endif %}
-
-            <a href="{% url 'student_class_list' %}" class="btn btn-primary">Apply</a>
-        </div>
     </div>
+
+{% if applied_classes %}
+    <div class="row">
+        <div class="table-responsive">
+            <table class = "table">
+                <thead>
+                    <tr>
+                        <th>Semester</th>
+                        <th>Class ID</th>
+                        <th>Class Name</th>
+                        <th>Application Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for class in applied_classes %}
+                        <tr>
+                            <td>{{ class.semester}}</td>
+                            <td>{{ class.class_id}}</td>
+                            <td>{{ class.class_name}}</td>
+                            <td>{{ class.application_status}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+       </div>
+    </div>
+{% else %}
+    <p>You haven't applied to any classes yet. When you do they will show up here.</p>
+{% endif %}
+    <a href="{% url 'student_class_list' %}" class="btn btn-primary">Apply</a>
+
 {% endblock %}
 
