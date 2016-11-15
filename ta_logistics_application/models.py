@@ -174,8 +174,11 @@ class ApplicationFields(models.Model):
     max_length = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)], default=0)
     select_options = models.CharField(max_length=500, default="")
 
-#This table will hold all of the records for students that apply to classes.
+
 class Status(models.Model):
+    '''
+    This table will hold all of the records for students that apply to classes.
+    '''
     person_number = models.CharField(max_length=30)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
