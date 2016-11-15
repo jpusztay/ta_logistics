@@ -25,6 +25,15 @@ class DataDefinitions():
         (3.0, '3.0'),
         (-1, '< 3.0'),
     )
+
+    NUM_CREDITS_CHOICES = (
+        (0, 0),
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+    )
+
     GRADE_CHOICES = (
         ('A','A'),
         ('A-','A-'),
@@ -86,6 +95,22 @@ class DataDefinitions():
         for i in ApplicationFields.objects.filter(is_default=False):
             ret.append((i.id, i.field_text))
         return tuple(ret)
+
+    def getStudentAppliedClasses(self, student_id):
+        applications = ClassApplicants.objects.filter(student_id=student_id)
+        data = []
+        for application in applications:
+            app_data = OrderedDict()
+            app_data['class_id'] = Classes.objects.get(id=application.class_id).class_listing_id
+            for tup in self.APPLICATION_STATUS:
+                id, name = tup
+                if id == application.application_status_id:
+                    app_data['application_status'] = name
+                    break
+            data.append(app_data)
+        return data
+
+
 
     def getStudentDataForApplicantsView(self, class_id):
         applicants = ClassApplicants.objects.filter(class_id=class_id).select_related()
@@ -156,6 +181,8 @@ class ClassApplicants(models.Model):
     personal_statement = models.CharField(max_length=400)
     class_grade = models.CharField(max_length=4, choices=DataDefinitions.GRADE_CHOICES)
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
+    number_credits = models.IntegerField(choices=DataDefinitions.NUM_CREDITS_CHOICES, default=0)
+    is_registered_for_credit = models.BooleanField(default=False)
 
 
 class Professors(models.Model):
@@ -173,17 +200,3 @@ class ApplicationFields(models.Model):
     data_type = models.CharField(max_length=6, choices=DataDefinitions.FIELD_TYPE_CHOICES)
     max_length = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)], default=0)
     select_options = models.CharField(max_length=500, default="")
-
-
-class Status(models.Model):
-    '''
-    This table will hold all of the records for students that apply to classes.
-    '''
-    person_number = models.CharField(max_length=30)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    semester = models.CharField(max_length=30)
-    class_id = models.CharField(max_length=30)
-    class_name = models.CharField(max_length=30)
-    application_status = models.CharField(max_length=30)
-    ubit_name = models.CharField(max_length=30)
