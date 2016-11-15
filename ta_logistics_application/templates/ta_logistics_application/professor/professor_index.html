@@ -12,9 +12,11 @@
         </div>
         <div>
             {% if current_class_list %}
+            <form id="button_form" method="post">
                 <table class = 'table display' id="professor_class_table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Class ID</th>
                             <th>Class Name</th>
                             <th>Number of applicants</th>
@@ -23,6 +25,7 @@
                     <tbody>
                     {% for class in current_class_list %}
                         <tr>
+                            <td><input name="class_{{ class.id }}" value="" class="select-class" type="checkbox" /></td>
                             <td><a href="{% url 'professor_class_applicants'%}?class_id={{ class.id }}">{{ class.class_listing_id }}</a></td>
                             <td>{{ class.class_name }}</td>
                             <td>{{ class.applicant_count }}</td>
@@ -30,6 +33,9 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                <button class="btn btn-success" type="submit" form="button_form" name="set_active">Make Active</button>
+                <button class="btn btn-info" type="submit" form="button_form" name="set_inactive">Make Inactive</button>
+            </form>
             {% else %}
                 <p>No classes yet</p>
             {% endif %}
