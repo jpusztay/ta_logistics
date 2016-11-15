@@ -16,6 +16,16 @@ class LoginForm(AuthenticationForm):
 
 
 ################ Student Context ################
+class ClassListForm(forms.Form):
+    """
+    This form will simply show a dropdown of available classes.
+    """
+
+    class_list = forms.ModelChoiceField(queryset=Classes.objects.values())
+    print(class_list)
+
+
+
 class StudentProfileForm(forms.ModelForm):
 
     class Meta:
@@ -56,6 +66,8 @@ class ApplicationForm(forms.Form):
         # MAYBE LATER: Add student data fields as un-editable fields with student info
         #student = Students.objects.get(id=self.student_id)
         self.fields['class_grade'] = forms.ChoiceField(choices=data_defs.GRADE_CHOICES)
+        self.fields['number_credits'] = forms.ChoiceField(choices=data_defs.NUM_CREDITS_CHOICES)
+        self.fields['number_credits'].label = "Select number of 495 credits (0-4)"
         self.fields['personal_statement'] = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter a Brief Summary of Why You Want The Position'}))
         self.optional_field_ids = map(int, Classes.objects.get(id=self.class_id).selected_optional_field_ids.split(","))
         for f_id in self.optional_field_ids:
@@ -114,6 +126,7 @@ class ApplicationForm(forms.Form):
             personal_statement=data['personal_statement'],
             class_grade=data['class_grade'],
             optional_fields=option_fields_json,
+            number_credits=data['number_credits']
         )
         application.save()
 

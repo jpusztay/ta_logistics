@@ -3,6 +3,7 @@ media/
 
 # Development Database
 data_students
+data_students.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

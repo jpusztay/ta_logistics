@@ -8,9 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 import re
 from django.core.mail import send_mail, EmailMessage
-from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm
+from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm
 from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
-
+import ta_logistics_application.models
 
 # CONSTANTS GO HERE
 APP_SUBMITTED = 0
@@ -41,12 +41,13 @@ def group_index(request):
 
 ################ Student Context ################
 
-
 def student_profile(request):
-    # This view will be shown to students the first time they login to the app
-    # or if you then want to edit any information in their profile.
-    #Will eventually retrieve data to show which student has applied to what class
-
+    """
+    This view will be shown to students the first time they login to the app or if you then want to
+    edit any information in their profile.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         form = StudentProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -59,47 +60,76 @@ def student_profile(request):
     return render(request, 'ta_logistics_application/student/profile.html', {'form': form})
 
 
-def student_status(request):
-    # This view will retrieve the classes that the current student applied to
-
-    applied_classes = Status.objects.filter(ubit_name='fgpinnoc')
-    context = {'applied_classes': applied_classes}
-    return render(request, 'ta_logistics_application/student/status.html', context)
-
+def student_index(request):
+    """
+    This view will display the list of classes that the student has applied to TA from the "status"
+    table.
+    :param request:
+    :return:
+    """
+    data_defs = DataDefinitions()
+    applied_classes = data_defs.getStudentAppliedClasses(student_id=request.user.id)
+    context = {
+        'applied_classes': applied_classes,
+    }
+    return render(request, 'ta_logistics_application/student/student_index.html', context)
 
 
 def student_class_list(request):
-    #This view will retrive all the possible classes offered to TA
+    """
+    This view will display a dropdown list of classes that students can apply to TA.
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        class_id = request.POST['selected_class']
+        return redirect('/student/application?class_id='+str(class_id))
 
-    return render(request, 'ta_logistics_application/student/class_list.html')
+    class_list = Classes.objects.filter(is_active=True).values('id', 'class_listing_id', 'class_name').order_by('class_listing_id')
+    context = {
+        'class_list': class_list,
+    }
+    return render(request, 'ta_logistics_application/student/class_list.html', context)
 
-# Finish when student index is finished
+
 # Get s_id and c_id parts working
-def student_application(request, class_id=None):#, c_id, s_id):
-    c_id = 13
+def student_application(request):# s_id):
+    class_id = int(request.GET.urlencode().split('=')[-1])
     s_id = request.user.id
     if request.method == 'POST':
-        form = ApplicationForm(request.POST, class_id=c_id, student_id=s_id)
+        form = ApplicationForm(request.POST, class_id=class_id, student_id=s_id)
         if form.is_valid():
             form.save()
             template = loader.get_template('ta_logistics_application/student/submission_received.html')
             return HttpResponse(template.render())
+    selected_class = Classes.objects.get(id=class_id).class_listing_id
+    form = ApplicationForm(class_id=class_id, student_id=s_id)
+    context = {
+        'selected_class': selected_class,
+        'form': form
+    }
+    return render(request, 'ta_logistics_application/student/application.html', context)
 
-    form = ApplicationForm(class_id=c_id, student_id=s_id)
-    return render(request, 'ta_logistics_application/student/application.html', {'form': form})
 
 ################ Professor Context ################
+
 @login_required(login_url='login')
 def professor_index(request):
     p_id = request.user.id
-    print(str(p_id))
-    current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True).values()
+    if request.method == "POST":
+        print(request.POST)
+        is_active = "set_active" in request.POST;
+        for key, val in request.POST.items():
+            if key.startswith("class_"):
+                curr_class = Classes.objects.get(id=key.split('_')[-1])
+                curr_class.is_active = is_active
+                curr_class.save()
+    current_class_list = Classes.objects.filter(professor_id=p_id).values()
     for current_class in current_class_list:
         current_class['applicant_count'] = ClassApplicants.objects.filter(class_id=current_class['id']).count()
     context = {
         'current_class_list' : current_class_list
     }
-    template = loader.get_template('ta_logistics_application/professor/professor_index.html')
     return render(request, 'ta_logistics_application/professor/professor_index.html', context)
 
 
