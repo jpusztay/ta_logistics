@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 import re
 from django.core.mail import send_mail, EmailMessage
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm
-from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields, Status
+from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
 import ta_logistics_application.models
 
 # CONSTANTS GO HERE
@@ -49,8 +49,6 @@ def student_profile(request):
     :param request:
     :return:
     """
-
-
     if request.method == 'POST':
         form = StudentProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -63,16 +61,20 @@ def student_profile(request):
     return render(request, 'ta_logistics_application/student/profile.html', {'form': form})
 
 
-def student_status(request):
+def student_index(request):
     """
     This view will display the list of classes that the student has applied to TA from the "status"
     table.
     :param request:
     :return:
     """
-    applied_classes = Status.objects.filter(ubit_name='fgpinnoc')
-    context = {'applied_classes': applied_classes}
-    return render(request, 'ta_logistics_application/student/status.html', context)
+    data_defs = DataDefinitions()
+    applied_classes = data_defs.getStudentAppliedClasses(student_id=request.user.id)
+    context = {
+        'applied_classes': applied_classes,
+    }
+    return render(request, 'ta_logistics_application/student/student_index.html', context)
+
 
 def student_class_list(request):
     """
@@ -80,28 +82,29 @@ def student_class_list(request):
     :param request:
     :return:
     """
+    if request.method == 'POST':
+        class_id = request.POST['selected_class']
+        return redirect('/student/application?class_id='+str(class_id))
 
-    class_list = Classes.objects.values('class_listing_id', 'class_name').order_by('class_listing_id')
+    class_list = Classes.objects.filter(is_active=True).values('id', 'class_listing_id', 'class_name').order_by('class_listing_id')
     context = {
         'class_list': class_list,
     }
     return render(request, 'ta_logistics_application/student/class_list.html', context)
 
+
 # Get s_id and c_id parts working
 def student_application(request):# s_id):
-    # This is the class that was selected from {% url 'student_class_list' %}
+    class_id = int(request.GET.urlencode().split('=')[-1])
     s_id = request.user.id
-
     if request.method == 'POST':
-
-        form = ApplicationForm(request.POST, class_id=1, student_id=s_id)
+        form = ApplicationForm(request.POST, class_id=class_id, student_id=s_id)
         if form.is_valid():
             form.save()
             template = loader.get_template('ta_logistics_application/student/submission_received.html')
             return HttpResponse(template.render())
-
-    selected_class = request.GET['selected_class']
-    form = ApplicationForm(class_id=1, student_id=s_id)
+    selected_class = Classes.objects.get(id=class_id).class_listing_id
+    form = ApplicationForm(class_id=class_id, student_id=s_id)
     context = {
         'selected_class': selected_class,
         'form': form
@@ -112,14 +115,12 @@ def student_application(request):# s_id):
 @login_required(login_url='login')
 def professor_index(request):
     p_id = request.user.id
-    print(str(p_id))
     current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True).values()
     for current_class in current_class_list:
         current_class['applicant_count'] = ClassApplicants.objects.filter(class_id=current_class['id']).count()
     context = {
         'current_class_list' : current_class_list
     }
-    template = loader.get_template('ta_logistics_application/professor/professor_index.html')
     return render(request, 'ta_logistics_application/professor/professor_index.html', context)
 
 

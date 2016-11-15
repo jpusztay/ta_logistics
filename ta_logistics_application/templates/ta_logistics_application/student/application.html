@@ -7,7 +7,7 @@
         </div>
         <div class="footnotes">
 
-            <form method="post" action ="{% url 'student_status' %}" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Submit</button>

@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row page-header">
         <div class="jumbotron">
-            <h2>Status Page</h2>
+            <h2>Current Applications</h2>
         </div>
     </div>
 
@@ -13,18 +13,14 @@
             <table class = "table">
                 <thead>
                     <tr>
-                        <th>Semester</th>
                         <th>Class ID</th>
-                        <th>Class Name</th>
                         <th>Application Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for class in applied_classes %}
                         <tr>
-                            <td>{{ class.semester}}</td>
                             <td>{{ class.class_id}}</td>
-                            <td>{{ class.class_name}}</td>
                             <td>{{ class.application_status}}</td>
                         </tr>
                     {% endfor %}
@@ -35,7 +31,7 @@
 {% else %}
     <p>You haven't applied to any classes yet. When you do they will show up here.</p>
 {% endif %}
-    <a href="{% url 'student_class_list' %}" class="btn btn-primary">Apply</a>
+    <a href="{% url 'student_class_list' %}" class="btn btn-primary">Apply for a Class</a>
 
 {% endblock %}
 
