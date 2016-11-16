@@ -47,7 +47,7 @@ def check_faculty(user):
     return user.groups.filter(name="professors").exists()
 
 def check_student(user):
-    return user.groups.filter(name="students").exits()
+    return user.groups.filter(name="students").exists()
 ################ Student Context ################
 
 @login_required()
