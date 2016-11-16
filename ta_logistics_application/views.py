@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.template.defaulttags import register
 from django.template import loader
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect
 import re
 from django.contrib.auth.models import Group
@@ -36,17 +36,22 @@ def group_index(request):
         if not request.user.groups.filter(name="professors").exists():
             request.user.groups.set([1])
         if request.user.groups.filter(name="professors").exists():
-            return render(request, 'ta_logistics_application/professor/professor_index.html')
+            return professor_index(request)
         elif request.user.groups.filter(name="students").exists():
             if Students.objects.filter(pk=request.user.id).exists():
-                template = loader.get_template('ta_logistics_application/student/profile.html')
-                return HttpResponse(template.render())
+                return student_index(request)
             else:
-                template = loader.get_template('ta_logistics_application/student/profile.html')
-                return render(request, 'ta_logistics_application/student/profile.html')
+                return student_profile(request)
 
+def check_faculty(user):
+    return user.groups.filter(name="professors").exists()
+
+def check_student(user):
+    return user.groups.filter(name="students").exits()
 ################ Student Context ################
 
+@login_required()
+@user_passes_test(check_student)
 def student_profile(request):
     """
     This view will be shown to students the first time they login to the app or if you then want to
