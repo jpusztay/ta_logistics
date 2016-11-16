@@ -3,12 +3,26 @@
 {% block content %}
     <div class="row">
         <div class="jumbotron">
-            <h2>List of Classes</h2>
-        </div>
-        <div class = "row">
-            <p> This page will display a list of classes that are being offered to TA. Student will select one and  then be brought to the application Form.</p>
-
-            <a href="{% url 'student_application' %}" class="btn btn-primary">Temporary Application Button</a>
+            <h2>Class List</h2>
         </div>
     </div>
+
+{% if class_list %}
+    <div class = "row">
+        <p> Select a class from the dropdown menu and then click the next button to apply for that class.</p>
+        <form method="post" id="button_form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="class-select">Class list:</label>
+                <select class="form-control" name="selected_class">
+                    {% for class in class_list %}
+                         <option value={{ class.id }}> {{class.class_listing_id }} - {{ class.class_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="btn btn-primary" type="submit">Apply to Selected Class</button>
+        </form>
+    </div>
+{% endif %}
+
 {% endblock %}

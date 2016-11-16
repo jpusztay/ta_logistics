@@ -1,0 +1,37 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="row page-header">
+        <div class="jumbotron">
+            <h2>Current Applications</h2>
+        </div>
+    </div>
+
+{% if applied_classes %}
+    <div class="row">
+        <div class="table-responsive">
+            <table class = "table">
+                <thead>
+                    <tr>
+                        <th>Class ID</th>
+                        <th>Application Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for class in applied_classes %}
+                        <tr>
+                            <td>{{ class.class_id}}</td>
+                            <td>{{ class.application_status}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+       </div>
+    </div>
+{% else %}
+    <p>You haven't applied to any classes yet. When you do they will show up here.</p>
+{% endif %}
+    <a href="{% url 'student_class_list' %}" class="btn btn-primary">Apply for a Class</a>
+
+{% endblock %}
+
