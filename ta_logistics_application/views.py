@@ -41,7 +41,6 @@ def group_index(request):
 
 ################ Student Context ################
 
-
 def student_profile(request):
     """
     This view will be shown to students the first time they login to the app or if you then want to
@@ -111,11 +110,21 @@ def student_application(request):# s_id):
     }
     return render(request, 'ta_logistics_application/student/application.html', context)
 
+
 ################ Professor Context ################
+
 @login_required(login_url='login')
 def professor_index(request):
     p_id = request.user.id
-    current_class_list = Classes.objects.filter(professor_id=p_id, is_active=True).values()
+    if request.method == "POST":
+        print(request.POST)
+        is_active = "set_active" in request.POST;
+        for key, val in request.POST.items():
+            if key.startswith("class_"):
+                curr_class = Classes.objects.get(id=key.split('_')[-1])
+                curr_class.is_active = is_active
+                curr_class.save()
+    current_class_list = Classes.objects.filter(professor_id=p_id).values()
     for current_class in current_class_list:
         current_class['applicant_count'] = ClassApplicants.objects.filter(class_id=current_class['id']).count()
     context = {

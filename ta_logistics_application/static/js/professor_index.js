@@ -5,4 +5,14 @@ $( document ).ready( function () {
         "info": false,
         "searching": false
     });
+
+    $('#show_inactive').change(function () {
+        console.log
+        if($('#inactive_classes').is(":visible")){
+            $('#inactive_classes').hide();
+        } else {
+            $('#inactive_classes').show();
+        }
+    })
+
 });
