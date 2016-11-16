@@ -35,13 +35,12 @@ def group_index(request):
         if request.user.groups.filter(name="professors").exists():
             return render(request, 'ta_logistics_application/professor/professor_index.html')
         elif request.user.groups.filter(name="students").exists():
-            try:
-                Students.objects.get(request.user.id)
+            if Students.objects.filter(pk=request.user.id).exists():
                 template = loader.get_template('ta_logistics_application/student/profile.html')
                 return HttpResponse(template.render())
-            except:
+            else:
                 template = loader.get_template('ta_logistics_application/student')
-                return HttpResponse
+                return HttpResponse(template)
 
 ################ Student Context ################
 
