@@ -35,9 +35,13 @@ def group_index(request):
         if request.user.groups.all()[0].name == "faculty":
             return render(request, 'ta_logistics_application/professor/professor_index.html')
         elif request.user.groups.all()[0].name == "student":
-            template = loader.get_template('ta_logistics_application/student/profile.html')
-            return HttpResponse(template.render())
-
+            try:
+                Students.objects.get(request.user.id)
+                template = loader.get_template('ta_logistics_application/student/profile.html')
+                return HttpResponse(template.render())
+            except:
+                templae = loader.get_template('ta_logistics_application/student')
+                return HttpResponse
 
 def student_profile(request):
     # This view will be shown to students the first time they login to the app
