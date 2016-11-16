@@ -7,6 +7,7 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 import re
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail, EmailMessage
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm
 from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
@@ -23,7 +24,7 @@ HIRE_INTERVIEW = 2
 HIRE_ACCEPT = 3
 HIRE_WAIT = 4
 
-
+## Auth Stuff
 def login(request):
     template = loader.get_template('ta_logistics_application/login.html')
     return HttpResponse(template.render())
@@ -32,12 +33,17 @@ def login(request):
 @login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
-        if request.user.groups.all()[0].name == "faculty":
+        if not request.user.groups.filter(name="professors").exists():
+            request.user.groups.set([1])
+        if request.user.groups.filter(name="professors").exists():
             return render(request, 'ta_logistics_application/professor/professor_index.html')
-        elif request.user.groups.all()[0].name == "student":
-            template = loader.get_template('ta_logistics_application/student/profile.html')
-            return HttpResponse(template.render())
-
+        elif request.user.groups.filter(name="students").exists():
+            if Students.objects.filter(pk=request.user.id).exists():
+                template = loader.get_template('ta_logistics_application/student/profile.html')
+                return HttpResponse(template.render())
+            else:
+                template = loader.get_template('ta_logistics_application/student/profile.html')
+                return render(request, 'ta_logistics_application/student/profile.html')
 
 ################ Student Context ################
 

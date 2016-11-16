@@ -1,0 +1,23 @@
+{% extends "ta_logistics_application/base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+   <div class="page-header">
+        <div class="jumbotron">
+            <h2>Welcome to TA Logistics </h2>
+            <h4>The TA Hiring app of the future</h4>
+        </div>
+   </div>
+   <p>
+      <h4>Your account has been activated and you may now apply for TA positions.
+      Please log in to continue with this process!</h4>
+   </p>
+
+    <script>
+        {% if not user.is_authenticated %}
+            $("ul.nav.navbar-nav.navbar-right").css("display","none");
+        {% endif %}
+    </script>
+
+{% endblock %}
