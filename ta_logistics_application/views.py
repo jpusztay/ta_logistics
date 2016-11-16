@@ -32,9 +32,9 @@ def login(request):
 @login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
-        if request.user.groups.all()[0].name == "faculty":
+        if request.user.groups.filter(name="professors").exists():
             return render(request, 'ta_logistics_application/professor/professor_index.html')
-        elif request.user.groups.all()[0].name == "student":
+        elif request.user.groups.filter(name="students").exists():
             try:
                 Students.objects.get(request.user.id)
                 template = loader.get_template('ta_logistics_application/student/profile.html')
