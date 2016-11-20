@@ -1,4 +1,8 @@
 {% extends 'ta_logistics_application/base.html' %}
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/js/student_index.js"></script>
+{% endblock %}
 
 {% block content %}
     <div class="row page-header">
@@ -8,13 +12,13 @@
     </div>
 
 {% if applied_classes %}
-    {% if given_offer %}
+    {% if pending_offer %}
         <div class="row">
             <h3>Pending Offers</h3>
             <form id="button_form" method="post">
                 {% csrf_token %}
                 <div class="table-responsive">
-                    <table class = "table">
+                    <table class = "table" id="offers_table">
                         <thead>
                             <tr>
                                 <th></th>
@@ -24,7 +28,7 @@
                         </thead>
                         <tbody>
                             {% for class in applied_classes %}
-                                {% if class.given_offer %}
+                                {% if class.pending_offer %}
                                     <tr>
                                         <td><input name="class_{{ class.id }}" value="" class="select-class" type="checkbox"/></td>
                                         <td>{{ class.class_id}}</td>
@@ -44,7 +48,7 @@
     <div class="row">
         <h3>Applications</h3>
         <div class="table-responsive">
-            <table class = "table">
+            <table class = "table" id="applications_table">
                 <thead>
                     <tr>
                         <th>Class ID</th>
