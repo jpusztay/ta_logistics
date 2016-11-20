@@ -204,8 +204,8 @@ class ApplicationFields(models.Model):
 
 
 class PayrollInfo(models.Model):
-    has_ssn = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
-    been_ub_employee = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
-    been_student_assistant = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
-    other_on_campus_job = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
-    fall_and_spring = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
+    has_ssn = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    been_ub_employee = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    been_student_assistant = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    other_on_campus_job = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    fall_and_spring = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)

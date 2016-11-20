@@ -29,5 +29,7 @@ urlpatterns = [
 
     url(r'^logout/$', views.logout, {'next_page': '/login'}),
 
+    url(r'^account/', include('registration.backends.hmac.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
 ]

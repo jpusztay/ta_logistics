@@ -4,9 +4,10 @@ from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
 from django.template.defaulttags import register
 from django.template import loader
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect
 import re
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail, EmailMessage
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm
 from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
@@ -23,7 +24,7 @@ HIRE_INTERVIEW = 2
 HIRE_ACCEPT = 3
 HIRE_WAIT = 4
 
-
+## Auth Stuff
 def login(request):
     template = loader.get_template('ta_logistics_application/login.html')
     return HttpResponse(template.render())
@@ -32,15 +33,25 @@ def login(request):
 @login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
-        if request.user.groups.all()[0].name == "faculty":
-            return render(request, 'ta_logistics_application/professor/professor_index.html')
-        elif request.user.groups.all()[0].name == "student":
-            template = loader.get_template('ta_logistics_application/student/profile.html')
-            return HttpResponse(template.render())
+        if not request.user.groups.filter(name="professors").exists():
+            request.user.groups.set([1])
+        if request.user.groups.filter(name="professors").exists():
+            return professor_index(request)
+        elif request.user.groups.filter(name="students").exists():
+            if Students.objects.filter(pk=request.user.id).exists():
+                return student_index(request)
+            else:
+                return student_profile(request)
 
+def check_faculty(user):
+    return user.groups.filter(name="professors").exists()
 
+def check_student(user):
+    return user.groups.filter(name="students").exists()
 ################ Student Context ################
 
+@login_required()
+@user_passes_test(check_student)
 def student_profile(request):
     """
     This view will be shown to students the first time they login to the app or if you then want to
@@ -59,7 +70,8 @@ def student_profile(request):
         form = StudentProfileForm()
     return render(request, 'ta_logistics_application/student/profile.html', {'form': form})
 
-
+@login_required()
+@user_passes_test(check_student)
 def student_index(request):
     """
     This view will display the list of classes that the student has applied to TA from the "status"
@@ -74,7 +86,8 @@ def student_index(request):
     }
     return render(request, 'ta_logistics_application/student/student_index.html', context)
 
-
+@login_required()
+@user_passes_test(check_student)
 def student_class_list(request):
     """
     This view will display a dropdown list of classes that students can apply to TA.
@@ -93,6 +106,8 @@ def student_class_list(request):
 
 
 # Get s_id and c_id parts working
+@login_required()
+@user_passes_test(check_student)
 def student_application(request):# s_id):
     class_id = int(request.GET.urlencode().split('=')[-1])
     s_id = request.user.id
@@ -114,6 +129,7 @@ def student_application(request):# s_id):
 ################ Professor Context ################
 
 @login_required(login_url='login')
+@user_passes_test(check_faculty)
 def professor_index(request):
     p_id = request.user.id
     if request.method == "POST":
@@ -134,6 +150,7 @@ def professor_index(request):
 
 
 @login_required(login_url='login')
+@user_passes_test(check_faculty)
 def professor_create_class(request):
     if request.method == 'POST':
         selected_optionals = request.POST.getlist("select_optional_fields")
@@ -162,6 +179,7 @@ def get_item(dictionary, key):
 
 
 @login_required(login_url='login')
+@user_passes_test(check_faculty)
 def professor_class_applicants(request):
     class_id = int(request.GET.urlencode().split('=')[-1])
     if request.method == 'POST':
@@ -232,6 +250,7 @@ def professor_class_applicants(request):
 
 
 @login_required(login_url='login')
+@user_passes_test(check_faculty)
 def view_optional_fields(request):
     if request.method == 'POST':
         request_list = list(request.POST.keys())
@@ -251,6 +270,7 @@ def view_optional_fields(request):
 
 
 @login_required(login_url='login')
+@user_passes_test(check_faculty)
 def edit_optional_field(request):
     field_id = int(request.GET.urlencode().split('=')[-1])
     if request.method == 'POST':
@@ -276,6 +296,7 @@ def edit_optional_field(request):
 
 
 @login_required(login_url='login')
+@user_passes_test(check_faculty)
 def add_optional_field(request):
     if request.method == 'POST':
         post = request.POST.copy()
