@@ -1,0 +1,17 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="page-header">
+        <div class="jumbotron">
+            <h2 class="center-block">403 Forbidden</h2>
+            <h4>You do not have permission to view
+                the page you are trying to access. Please go back to your home page and try again.</h4>
+        </div>
+    </div>
+    <script>
+        {% if not user.is_authenticated %}
+            $("ul.nav.navbar-nav.navbar-right").css("display","none");
+        {% endif %}
+    </script>
+
+{% endblock %}

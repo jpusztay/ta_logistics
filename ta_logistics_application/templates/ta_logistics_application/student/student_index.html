@@ -9,6 +9,38 @@
 
 {% if applied_classes %}
     <div class="row">
+        <h3>Pending Offers</h3>
+        <form id="button_form" method="post">
+            {% csrf_token %}
+            <div class="table-responsive">
+                <table class = "table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Class ID</th>
+                            <th>Application Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for class in applied_classes %}
+                            {% if class.given_offer %}
+                                <tr>
+                                    <td><input name="class_{{ class.id }}" value="" class="select-class" type="checkbox"/></td>
+                                    <td>{{ class.class_id}}</td>
+                                    <td>{{ class.application_status}}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+                <button class="btn btn-success" type="submit" form="button_form" name="accept">Accept Offer</button>
+                <button class="btn btn-danger" type="submit" form="button_form" name="decline">Decline Offer</button>
+           </div>
+        </form>
+    </div>
+    <div class="row">
+        <h3>Applications</h3>
         <div class="table-responsive">
             <table class = "table">
                 <thead>

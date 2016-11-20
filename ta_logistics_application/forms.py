@@ -2,6 +2,7 @@ from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
 from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields
+from registration.forms import RegistrationForm
 
 
 #String Constants go HERE:
@@ -61,7 +62,6 @@ class ApplicationForm(forms.Form):
         self.student_id = kwargs.pop('student_id')
         super(ApplicationForm, self).__init__(*args, **kwargs)
 
-        self.application_status_id = 0
         self.hiring_status_id = 0
         self.field_text_list = {}
         # MAYBE LATER: Add student data fields as un-editable fields with student info
@@ -122,7 +122,6 @@ class ApplicationForm(forms.Form):
         application = ClassApplicants(
             class_id=self.class_id,
             student_id=self.student_id,
-            application_status_id=self.application_status_id,
             hiring_status_id=self.hiring_status_id,
             personal_statement=data['personal_statement'],
             class_grade=data['class_grade'],
@@ -204,3 +203,7 @@ class AddOptionalFieldForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+
+class CustomRegForm(RegistrationForm):
+    pass

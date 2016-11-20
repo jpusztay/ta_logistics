@@ -60,7 +60,7 @@ class DataDefinitions():
         ('Expert','Expert'),
         ('Advanced','Advanced'),
         ('Moderate','Moderate'),
-        ('Novince','Novice'),
+        ('Novice','Novice'),
         ('None','None'),
     )
     HIRING_STATUS = (
@@ -70,8 +70,16 @@ class DataDefinitions():
         (3, 'Given Offer'),
         (4, 'Wait Listed'),
         (5, 'Accepted Offer'),
-        (6, 'Denied Offer'),
-
+        (6, 'Declined Offer'),
+    )
+    APPLICATION_STATUS = (
+        (0, 'Application Pending'),
+        (1, 'Application Complete'),
+        (2, 'Application Pending'),
+        (3, 'Given Offer'),
+        (4, 'Application Pending'),
+        (5, 'Accepted Offer'),
+        (6, 'Declined Offer'),
     )
 
     STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
@@ -104,10 +112,11 @@ class DataDefinitions():
         for application in applications:
             app_data = OrderedDict()
             app_data['class_id'] = Classes.objects.get(id=application.class_id).class_listing_id
-            for tup in self.APPLICATION_STATUS:
-                id, name = tup
-                if id == application.application_status_id:
-                    app_data['application_status'] = name
+            app_data['given_offer'] = application.given_offer
+            for choice_tuple in self.APPLICATION_STATUS:
+                choice_id, choice_name = choice_tuple
+                if choice_id == application.hiring_status_id:
+                    app_data['application_status'] = choice_name
                     break
             data.append(app_data)
         return data
@@ -184,6 +193,7 @@ class ClassApplicants(models.Model):
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
     number_credits = models.IntegerField(choices=DataDefinitions.NUM_CREDITS_CHOICES, default=0)
     is_registered_for_credit = models.BooleanField(default=False)
+    given_offer = models.BooleanField(default=False)
 
 
 class Professors(models.Model):
