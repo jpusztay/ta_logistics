@@ -2,6 +2,7 @@ from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
 from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields
+from registration.forms import RegistrationForm
 
 
 #String Constants go HERE:
@@ -204,3 +205,7 @@ class AddOptionalFieldForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+
+class CustomRegForm(RegistrationForm):
+    pass
