@@ -7,9 +7,13 @@ import datetime, json
 
 
 class DataDefinitions():
-    BOOL_YES_NO = (
+    BOOL_ACTIVE = (
         (1, 'Yes'),
         (0, 'Activate Later')
+    )
+    BOOL_YES_NO = (
+        (1, 'Yes'),
+        (0, 'No')
     )
     GPA_CHOICES = (
         (4.0, '4.0'),
@@ -56,20 +60,26 @@ class DataDefinitions():
         ('Expert','Expert'),
         ('Advanced','Advanced'),
         ('Moderate','Moderate'),
-        ('Novince','Novice'),
+        ('Novice','Novice'),
         ('None','None'),
-    )
-    APPLICATION_STATUS = (
-        (0, 'Application Submitted'),
-        (1, 'Application Pending'),
-        (2, 'Application Complete'),
     )
     HIRING_STATUS = (
         (0, 'Pending Review'),
         (1, 'Rejected'),
         (2, 'Interviewing'),
-        (3, 'Accepted'),
+        (3, 'Given Offer'),
         (4, 'Wait Listed'),
+        (5, 'Accepted Offer'),
+        (6, 'Declined Offer'),
+    )
+    APPLICATION_STATUS = (
+        (0, 'Application Pending'),
+        (1, 'Application Complete'),
+        (2, 'Application Pending'),
+        (3, 'Given Offer'),
+        (4, 'Application Pending'),
+        (5, 'Accepted Offer'),
+        (6, 'Declined Offer'),
     )
 
     STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
@@ -101,11 +111,14 @@ class DataDefinitions():
         data = []
         for application in applications:
             app_data = OrderedDict()
-            app_data['class_id'] = Classes.objects.get(id=application.class_id).class_listing_id
-            for tup in self.APPLICATION_STATUS:
-                id, name = tup
-                if id == application.application_status_id:
-                    app_data['application_status'] = name
+            curr_class = Classes.objects.get(id=application.class_id)
+            app_data['class_id'] = curr_class.class_listing_id
+            app_data['id'] = curr_class.id
+            app_data['given_offer'] = application.given_offer
+            for choice_tuple in self.APPLICATION_STATUS:
+                choice_id, choice_name = choice_tuple
+                if choice_id == application.hiring_status_id:
+                    app_data['application_status'] = choice_name
                     break
             data.append(app_data)
         return data
@@ -175,7 +188,6 @@ class ClassApplicants(models.Model):
     class_id = models.IntegerField()
     # Linked to auto incremented ID of students table
     student_id = models.IntegerField()
-    application_status_id = models.IntegerField(choices=DataDefinitions.APPLICATION_STATUS, default=0)
     hiring_status_id = models.IntegerField(choices=DataDefinitions.HIRING_STATUS, default=0)
     date_submitted = models.DateTimeField(auto_now_add=True)
     personal_statement = models.CharField(max_length=400)
@@ -183,6 +195,7 @@ class ClassApplicants(models.Model):
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
     number_credits = models.IntegerField(choices=DataDefinitions.NUM_CREDITS_CHOICES, default=0)
     is_registered_for_credit = models.BooleanField(default=False)
+    given_offer = models.BooleanField(default=False)
 
 
 class Professors(models.Model):
@@ -200,3 +213,11 @@ class ApplicationFields(models.Model):
     data_type = models.CharField(max_length=6, choices=DataDefinitions.FIELD_TYPE_CHOICES)
     max_length = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)], default=0)
     select_options = models.CharField(max_length=500, default="")
+
+
+class PayrollInfo(models.Model):
+    has_ssn = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    been_ub_employee = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    been_student_assistant = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    other_on_campus_job = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    fall_and_spring = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
