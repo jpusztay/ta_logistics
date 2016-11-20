@@ -164,7 +164,7 @@ def professor_profile(request):
     if not check_faculty(request.user):
         raise PermissionDenied
     if request.method == 'POST':
-        form = ProfessorProfileForm(request.POST, request.FILES)
+        form = ProfessorProfileForm(request.POST)
         if form.is_valid():
             # file is saved
             form.save()

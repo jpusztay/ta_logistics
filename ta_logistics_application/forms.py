@@ -215,6 +215,7 @@ class ProfessorProfileForm(forms.ModelForm):
             'ubit_name': forms.TextInput(attrs={'placeholder': 'Enter your UBIT'}),
             'first_name': forms.TextInput(attrs={'placeholder': 'Enter First Name'}),
             'last_name': forms.TextInput(attrs={'placeholder': 'Enter Last Name'}),
+            'id': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
