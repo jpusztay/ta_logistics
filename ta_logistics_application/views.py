@@ -79,21 +79,21 @@ def student_index(request):
         for key, val in request.POST.items():
             if key.startswith("class_"):
                 curr_class = ClassApplicants.objects.get(student_id=request.user.id, class_id=key.split('_')[-1])
+                curr_class.pending_offer = False
                 if accept_offer:
                     curr_class.hiring_status_id = HIRE_ACCEPT
                 else:
                     curr_class.hiring_status_id = HIRE_DECLINE
-                    curr_class.given_offer = False
                 curr_class.save()
     data_defs = DataDefinitions()
     applied_classes = data_defs.getStudentAppliedClasses(student_id=request.user.id)
-    given_offer = False
+    pending_offer = False
     for classes in applied_classes:
-        if classes['given_offer']:
-            given_offer = True
+        if classes['pending_offer']:
+            pending_offer = True
     context = {
         'applied_classes': applied_classes,
-        'given_offer': given_offer
+        'pending_offer': pending_offer
     }
     return render(request, 'ta_logistics_application/student/student_index.html', context)
 
@@ -224,7 +224,7 @@ def professor_create_class(request):
         # Hacky solution, possible rework in the future
         request.POST['selected_optional_field_ids'] = ','.join(map(str,selected_optionals))
         # Replace this with ID of professor that is signed in
-        request.POST['professor_id'] = 1
+        request.POST['professor_id'] = request.user.id
         form = CreateClassForm(request.POST)
         if form.is_valid():
             form.save()
@@ -269,7 +269,7 @@ def professor_class_applicants(request):
                     body = "You've been selected for an interview!"
                 elif 'hired' in request_list:
                     application_entry.hiring_status_id = HIRE_OFFERED
-                    application_entry.given_offer = True
+                    application_entry.pending_offer = True
                     subject = "Congratulations, You've been given an offer!"
                     body = "Congratulations, You've been given an offer!"
                 elif 'wait_listed' in request_list:
