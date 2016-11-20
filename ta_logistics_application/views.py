@@ -43,6 +43,8 @@ def check_student(user):
 @login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
+        if request.user.is_staff:
+            return HttpResponseRedirect("/admin/")
         if not request.user.groups.filter(name="professors").exists():
             request.user.groups.set([1])
         if request.user.groups.filter(name="professors").exists():
