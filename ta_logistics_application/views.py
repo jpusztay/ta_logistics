@@ -13,6 +13,7 @@ from django.core.mail import send_mail, EmailMessage
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm
 from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
 import ta_logistics_application.models
+from django.contrib.auth.views import login
 
 # CONSTANTS GO HERE
 APP_SUBMITTED = 0
@@ -27,9 +28,11 @@ HIRE_WAIT = 4
 
 
 ## Auth Stuff
-def login(request):
-    template = loader.get_template('ta_logistics_application/login.html')
-    return HttpResponse(template.render())
+def custom_login(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect("/home/")
+    else:
+        return login(request)
 
 
 def check_faculty(user):
