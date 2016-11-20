@@ -110,6 +110,7 @@ def student_profile(request):
     if not check_student(request.user):
         raise PermissionDenied
     if request.method == 'POST':
+        request.POST['id'] = request.user.id
         form = StudentProfileForm(request.POST, request.FILES)
         if form.is_valid():
             # file is saved

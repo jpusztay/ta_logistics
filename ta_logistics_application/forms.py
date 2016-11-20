@@ -32,7 +32,7 @@ class StudentProfileForm(forms.ModelForm):
 
     class Meta:
         model = Students
-        fields = ['ubit_name', 'person_number', 'first_name', 'last_name', 'gpa', 'resume', 'teaching_experience']
+        fields = ['ubit_name', 'person_number', 'first_name', 'last_name', 'gpa', 'resume', 'teaching_experience', 'id']
         widgets = {
             'ubit_name': forms.TextInput(attrs={'placeholder': 'Enter UBIT Name'}),
             'person_number': forms.TextInput(attrs={'placeholder': 'Enter Person Number'}),
@@ -40,6 +40,7 @@ class StudentProfileForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'placeholder': 'Enter Last Name'}),
             'teaching_experience': forms.Textarea(attrs={'placeholder': 'Enter a Brief Summary of Your Teaching Experience'}),
             'gpa': forms.Select(attrs={'placeholder': 'Select GPA'}),
+            'id': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -208,7 +209,7 @@ class AddOptionalFieldForm(forms.ModelForm):
 class ProfessorProfileForm(forms.ModelForm):
     class Meta:
         model = Professors
-        fields = ['ubit_name', 'first_name', 'last_name']
+        fields = ['ubit_name', 'first_name', 'last_name', 'id']
         widgets = {
             'ubit_name': forms.TextInput(attrs={'placeholder': 'Enter your UBIT'}),
             'first_name': forms.TextInput(attrs={'placeholder': 'Enter First Name'}),
