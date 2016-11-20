@@ -41,6 +41,7 @@ def check_student(user):
 @login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
+        print(str(request.user.id))
         if request.user.is_staff:
             return HttpResponseRedirect("/admin/")
         if not request.user.groups.filter(name="professors").exists():
@@ -48,37 +49,13 @@ def group_index(request):
         if request.user.groups.filter(name="professors").exists():
             return professor_index(request)
         elif request.user.groups.filter(name="students").exists():
-            if not Students.objects.filter(pk=request.user.id).exists():
+            if Students.objects.filter(id=request.user.id).exists():
                 return student_index(request)
             else:
                 return student_profile(request)
 
 
 ################ Student Context ################
-
-
-@login_required()
-#@user_passes_test(check_student)
-def student_profile(request):
-    """
-    This view will be shown to students the first time they login to the app or if you then want to
-    edit any information in their profile.
-    :param request:
-    :return:
-    """
-    if not check_student(request.user):
-        raise PermissionDenied
-    if request.method == 'POST':
-        form = StudentProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            # file is saved
-            form.save()
-            template = loader.get_template('ta_logistics_application/student/submission_received.html')
-            return HttpResponse(template.render())
-    else:
-        form = StudentProfileForm()
-    return render(request, 'ta_logistics_application/student/profile.html', {'form': form})
-
 
 @login_required()
 #@user_passes_test(check_student)
@@ -105,10 +82,38 @@ def student_index(request):
                 curr_class.save()
     data_defs = DataDefinitions()
     applied_classes = data_defs.getStudentAppliedClasses(student_id=request.user.id)
+    given_offer = False
+    for classes in applied_classes:
+        if classes['given_offer']:
+            given_offer = True
     context = {
         'applied_classes': applied_classes,
+        'given_offer': given_offer
     }
     return render(request, 'ta_logistics_application/student/student_index.html', context)
+
+
+@login_required()
+#@user_passes_test(check_student)
+def student_profile(request):
+    """
+    This view will be shown to students the first time they login to the app or if you then want to
+    edit any information in their profile.
+    :param request:
+    :return:
+    """
+    if not check_student(request.user):
+        raise PermissionDenied
+    if request.method == 'POST':
+        form = StudentProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # file is saved
+            form.save()
+            template = loader.get_template('ta_logistics_application/student/submission_received.html')
+            return HttpResponse(template.render())
+    else:
+        form = StudentProfileForm()
+    return render(request, 'ta_logistics_application/student/profile.html', {'form': form})
 
 
 @login_required()
@@ -235,6 +240,7 @@ def professor_class_applicants(request):
                     body = "You've been selected for an interview!"
                 elif 'hired' in request_list:
                     application_entry.hiring_status_id = HIRE_OFFERED
+                    application_entry.given_offer = True
                     subject = "Congratulations, You've been given an offer!"
                     body = "Congratulations, You've been given an offer!"
                 elif 'wait_listed' in request_list:

@@ -111,7 +111,9 @@ class DataDefinitions():
         data = []
         for application in applications:
             app_data = OrderedDict()
-            app_data['class_id'] = Classes.objects.get(id=application.class_id).class_listing_id
+            curr_class = Classes.objects.get(id=application.class_id)
+            app_data['class_id'] = curr_class.class_listing_id
+            app_data['id'] = curr_class.id
             app_data['given_offer'] = application.given_offer
             for choice_tuple in self.APPLICATION_STATUS:
                 choice_id, choice_name = choice_tuple
