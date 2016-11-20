@@ -196,7 +196,7 @@ class AddOptionalFieldForm(forms.ModelForm):
 class ProfessorsForm(ModelForm):
     class Meta:
         model = Professors
-        fields = ['id', 'ubit_name', 'first_Name', 'last_name']
+        fields = ['id', 'ubit_name', 'first_name', 'last_name']
         widgets = {
             'id': forms.Textarea(attrs={'required': True},),
             'ubit_name': forms.Textarea(attrs={'required': True},),
