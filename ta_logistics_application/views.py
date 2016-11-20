@@ -14,16 +14,14 @@ from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, 
 from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
 import ta_logistics_application.models
 
-# CONSTANTS GO HERE
-APP_SUBMITTED = 0
-APP_PENDING = 1
-APP_COMPLETE = 2
 
 HIRE_REVIEW = 0
 HIRE_REJECT = 1
 HIRE_INTERVIEW = 2
-HIRE_ACCEPT = 3
+HIRE_OFFERED = 3
 HIRE_WAIT = 4
+HIRE_ACCEPT = 5
+HIRE_DECLINE = 6
 
 
 ## Auth Stuff
@@ -93,6 +91,18 @@ def student_index(request):
     """
     if not check_student(request.user):
         raise PermissionDenied
+    if request.method == "POST":
+        print(request.POST)
+        accept_offer = "accept" in request.POST;
+        for key, val in request.POST.items():
+            if key.startswith("class_"):
+                curr_class = ClassApplicants.objects.get(student_id=request.user.id, class_id=key.split('_')[-1])
+                if accept_offer:
+                    curr_class.hiring_status_id = HIRE_ACCEPT
+                else:
+                    curr_class.hiring_status_id = HIRE_DECLINE
+                    curr_class.given_offer = False
+                curr_class.save()
     data_defs = DataDefinitions()
     applied_classes = data_defs.getStudentAppliedClasses(student_id=request.user.id)
     context = {
@@ -218,41 +228,39 @@ def professor_class_applicants(request):
                 student_id = Students.objects.get(ubit_name=ubit_name).id
                 application_entry = ClassApplicants.objects.get(student_id=student_id, class_id=class_id)
                 request_list = list(request.POST.keys())
+                send_email = True
                 if 'interview' in request_list:
-                    application_entry.application_status_id = APP_PENDING
                     application_entry.hiring_status_id = HIRE_INTERVIEW
                     subject = "You've been selected for an interview!"
                     body = "You've been selected for an interview!"
                 elif 'hired' in request_list:
-                    application_entry.application_status_id = APP_COMPLETE
-                    application_entry.hiring_status_id = HIRE_ACCEPT
-                    subject = "Congratulations, You've been Hired!"
-                    body = "Congratulations, You've been Hired!"
+                    application_entry.hiring_status_id = HIRE_OFFERED
+                    subject = "Congratulations, You've been given an offer!"
+                    body = "Congratulations, You've been given an offer!"
                 elif 'wait_listed' in request_list:
-                    application_entry.application_status_id = APP_PENDING
                     application_entry.hiring_status_id = HIRE_WAIT
-                    subject = "Application Pending"
-                    body = "Application Pending"
+                    send_email = False
                 elif 'reject' in request_list:
-                    application_entry.application_status_id = APP_COMPLETE
                     application_entry.hiring_status_id = HIRE_REJECT
                     subject = "Sorry"
                     body = "Sorry"
                 else:
                     break
-                email_message = EmailMessage(
-                    subject,
-                    body,
-                    'cse442.talogistics@gmail.com',
-                    [email_address],
-                )
-                try:
-                    email_message.send(fail_silently=False)
-                except:
-                    # Return error-sending-email page, status not changed
-                    error_students.append(ubit_name)
 
-                if not ubit_name in error_students:
+                if send_email:
+                    email_message = EmailMessage(
+                        subject,
+                        body,
+                        'cse442.talogistics@gmail.com',
+                        [email_address],
+                    )
+                    try:
+                        email_message.send(fail_silently=False)
+                    except:
+                        # Return error-sending-email page, status not changed
+                        error_students.append(ubit_name)
+
+                if ubit_name not in error_students:
                     students.append(ubit_name)
                 application_entry.save()
         context = {
