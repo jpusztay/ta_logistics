@@ -55,7 +55,7 @@ def group_index(request):
                 return professor_profile(request)
             return professor_index(request)
         elif request.user.groups.filter(name="students").exists():
-            if not Students.objects.filter(pk=request.user.id).exists():
+            if Students.objects.filter(pk=request.user.id).exists():
                 return student_index(request)
             else:
                 return student_profile(request)
@@ -164,11 +164,13 @@ def professor_profile(request):
     if not check_faculty(request.user):
         raise PermissionDenied
     if request.method == 'POST':
+        request.POST['id'] = request.user.id
+        print(request.POST)
         form = ProfessorProfileForm(request.POST)
         if form.is_valid():
             # file is saved
             form.save()
-            return professor_index(request)
+            return HttpResponseRedirect("/home")
     else:
         form = ProfessorProfileForm()
     return render(request, 'ta_logistics_application/professor/professor_information.html', {'form': form})
