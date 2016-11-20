@@ -270,3 +270,14 @@ def add_optional_field(request):
 
     form = AddOptionalFieldForm()
     return render(request, 'ta_logistics_application/professor/add_optional_field.html', {'form': form})
+
+
+
+def Professors_form(request):
+    if request.method == 'POST':
+        form = Professors_form(request.POST,)
+        if form.is_valid():
+            form.save()
+
+    form = Professors_form()
+    return render(request, 'ta_logistics_application/professor/professorform.html', {'form': form})
