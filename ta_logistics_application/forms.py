@@ -143,7 +143,7 @@ class CreateClassForm(forms.ModelForm):
             'professor_id': forms.HiddenInput(),
             'class_listing_id': forms.TextInput(attrs={'placeholder': 'e.g. CSE331'}),
             'active_semester': forms.Select(choices=data_defs.getActiveSemesters(), attrs={'placeholder': 'Select Active Semester'}),
-            'is_active': forms.Select(choices=data_defs.BOOL_YES_NO),
+            'is_active': forms.Select(choices=data_defs.BOOL_ACTIVE),
             'class_name': forms.TextInput(attrs={'placeholder': 'e.g. Introduction to Algorithm Analysis and Design'}),
             'available_hours': forms.NumberInput(attrs={'placeholder': 'Estimate If You Don\'t Know Yet'}),
             'selected_optional_field_ids': forms.HiddenInput(),

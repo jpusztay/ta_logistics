@@ -7,9 +7,13 @@ import datetime, json
 
 
 class DataDefinitions():
-    BOOL_YES_NO = (
+    BOOL_ACTIVE = (
         (1, 'Yes'),
         (0, 'Activate Later')
+    )
+    BOOL_YES_NO = (
+        (1, 'Yes'),
+        (0, 'No')
     )
     GPA_CHOICES = (
         (4.0, '4.0'),
@@ -59,17 +63,15 @@ class DataDefinitions():
         ('Novince','Novice'),
         ('None','None'),
     )
-    APPLICATION_STATUS = (
-        (0, 'Application Submitted'),
-        (1, 'Application Pending'),
-        (2, 'Application Complete'),
-    )
     HIRING_STATUS = (
         (0, 'Pending Review'),
         (1, 'Rejected'),
         (2, 'Interviewing'),
-        (3, 'Accepted'),
+        (3, 'Given Offer'),
         (4, 'Wait Listed'),
+        (5, 'Accepted Offer'),
+        (6, 'Denied Offer'),
+
     )
 
     STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
@@ -175,7 +177,6 @@ class ClassApplicants(models.Model):
     class_id = models.IntegerField()
     # Linked to auto incremented ID of students table
     student_id = models.IntegerField()
-    application_status_id = models.IntegerField(choices=DataDefinitions.APPLICATION_STATUS, default=0)
     hiring_status_id = models.IntegerField(choices=DataDefinitions.HIRING_STATUS, default=0)
     date_submitted = models.DateTimeField(auto_now_add=True)
     personal_statement = models.CharField(max_length=400)
@@ -200,3 +201,11 @@ class ApplicationFields(models.Model):
     data_type = models.CharField(max_length=6, choices=DataDefinitions.FIELD_TYPE_CHOICES)
     max_length = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)], default=0)
     select_options = models.CharField(max_length=500, default="")
+
+
+class PayrollInfo(models.Model):
+    has_ssn = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
+    been_ub_employee = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
+    been_student_assistant = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
+    other_on_campus_job = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
+    fall_and_spring = models.BooleanField(default=0, choices = DataDefinitions.BOOL_YES_NO)
