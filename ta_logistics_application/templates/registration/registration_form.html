@@ -7,19 +7,18 @@
             <h2>Welcome to TA Logistics </h2>
             <h4>The TA Hiring app of the future</h4>
         </div>
-        <div>
-            {% if form.errors%}
-                <p>Your passwords didn't match. Please try again.</p>
-            {% endif %}
+            <div>
+                            {% if form.errors%}
+                                <p>Your passwords didn't match. Please try again.</p>
+                            {% endif %}
             <form method="post" action="">
-
                 {% csrf_token %}
                 <div class="container-fluid center-block">
                     <ul class="list-unstyled">
                         <li>
                             <div class="row">
                                 <div class="col-xs-6">
-                                    <h4>Use your UBIT:</h4>
+                                    <h4>Your UBIT Username:</h4>
                                 </div>
                                 <div class="col-xs-6">{{ form.username }}</div>
                             </div>

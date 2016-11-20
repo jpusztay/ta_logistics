@@ -10,9 +10,10 @@ import re
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail, EmailMessage
-from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm
-from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
+from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm, ProfessorProfileForm
+from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields, Professors
 import ta_logistics_application.models
+from django.contrib.auth.views import login
 
 
 HIRE_REVIEW = 0
@@ -25,9 +26,11 @@ HIRE_DECLINE = 6
 
 
 ## Auth Stuff
-def login(request):
-    template = loader.get_template('ta_logistics_application/login.html')
-    return HttpResponse(template.render())
+def custom_login(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect("/home/")
+    else:
+        return login(request)
 
 
 def check_faculty(user):
@@ -47,9 +50,11 @@ def group_index(request):
         if not request.user.groups.filter(name="professors").exists():
             request.user.groups.set([1])
         if request.user.groups.filter(name="professors").exists():
+            if not Professors.objects.filter(pk=request.user.id).exists():
+                return professor_profile(request)
             return professor_index(request)
         elif request.user.groups.filter(name="students").exists():
-            if Students.objects.filter(id=request.user.id).exists():
+            if Students.objects.filter(pk=request.user.id).exists():
                 return student_index(request)
             else:
                 return student_profile(request)
@@ -105,6 +110,7 @@ def student_profile(request):
     if not check_student(request.user):
         raise PermissionDenied
     if request.method == 'POST':
+        request.POST['id'] = request.user.id
         form = StudentProfileForm(request.POST, request.FILES)
         if form.is_valid():
             # file is saved
@@ -161,6 +167,30 @@ def student_application(request):# s_id):
 
 
 ################ Professor Context ################
+
+@login_required()
+#@user_passes_test(check_student)
+def professor_profile(request):
+    """
+    This view will be shown to professors the first time they login to the app or if you then want to
+    edit any information in their profile.
+    :param request:
+    :return:
+    """
+    if not check_faculty(request.user):
+        raise PermissionDenied
+    if request.method == 'POST':
+        request.POST['id'] = request.user.id
+        print(request.POST)
+        form = ProfessorProfileForm(request.POST)
+        if form.is_valid():
+            # file is saved
+            form.save()
+            return HttpResponseRedirect("/home")
+    else:
+        form = ProfessorProfileForm()
+    return render(request, 'ta_logistics_application/professor/professor_information.html', {'form': form})
+
 
 @login_required(login_url='login')
 #@user_passes_test(check_faculty)

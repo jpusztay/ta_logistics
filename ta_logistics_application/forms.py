@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
-from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields
+from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields, Professors
 from registration.forms import RegistrationForm
 
 
@@ -32,7 +32,7 @@ class StudentProfileForm(forms.ModelForm):
 
     class Meta:
         model = Students
-        fields = ['ubit_name', 'person_number', 'first_name', 'last_name', 'gpa', 'resume', 'teaching_experience']
+        fields = ['ubit_name', 'person_number', 'first_name', 'last_name', 'gpa', 'resume', 'teaching_experience', 'id']
         widgets = {
             'ubit_name': forms.TextInput(attrs={'placeholder': 'Enter UBIT Name'}),
             'person_number': forms.TextInput(attrs={'placeholder': 'Enter Person Number'}),
@@ -40,6 +40,7 @@ class StudentProfileForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'placeholder': 'Enter Last Name'}),
             'teaching_experience': forms.Textarea(attrs={'placeholder': 'Enter a Brief Summary of Your Teaching Experience'}),
             'gpa': forms.Select(attrs={'placeholder': 'Select GPA'}),
+            'id': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -205,5 +206,20 @@ class AddOptionalFieldForm(forms.ModelForm):
             })
 
 
-class CustomRegForm(RegistrationForm):
-    pass
+class ProfessorProfileForm(forms.ModelForm):
+    class Meta:
+        model = Professors
+        fields = ['ubit_name', 'first_name', 'last_name', 'id']
+        widgets = {
+            'ubit_name': forms.TextInput(attrs={'placeholder': 'Enter your UBIT'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'Enter First Name'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Enter Last Name'}),
+            'id': forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ProfessorProfileForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
