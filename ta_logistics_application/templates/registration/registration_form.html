@@ -16,21 +16,39 @@
                 {% csrf_token %}
                 <div class="container-fluid center-block">
                     <ul class="list-unstyled">
-                        <li class="align-right">
-                            <label for="USERNAME_FIELD">Your UBIT Username: </label>
-                            {{ form.username }}
+                        <li>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <h4>Use your UBIT:</h4>
+                                </div>
+                                <div class="col-xs-6">{{ form.username }}</div>
+                            </div>
                         </li>
                         <li>
-                            <label for="email">Your UB email: </label>
-                            {{ form.email }}
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <h4>Your @buffalo.edu email address:</h4>
+                                </div>
+                                <div class="col-xs-6">{{ form.email }}</div>
+                            </div>
                         </li>
                         <li>
-                            <label for="password1">Password: </label>
-                            {{ form.password1 }}
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <h4>Password:</h4>
+                                </div>
+                                <div class="col-xs-6">{{ form.password1 }}</div>
+                            </div>
+
                         </li>
                         <li>
-                            <label for="password2"> Re-Enter Password: </label>
-                            {{ form.password2 }}
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <h4>Re-Enter Password:</h4>
+                                </div>
+                                <div class="col-xs-6">{{ form.password2 }}</div>
+                            </div>
+
                         </li>
                     </ul>
                 </div>
