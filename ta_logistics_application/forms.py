@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
-from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields
+from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields, Professors
 from registration.forms import RegistrationForm
 
 
@@ -207,5 +207,19 @@ class AddOptionalFieldForm(forms.ModelForm):
             })
 
 
-class CustomRegForm(RegistrationForm):
-    pass
+class ProfessorProfileForm(forms.ModelForm):
+    class Meta:
+        model = Professors
+        fields = ['ubit_name', 'first_name', 'last_name']
+        widgets = {
+            'ubit_name': forms.TextInput(attrs={'placeholder': 'Enter your UBIT'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'Enter First Name'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Enter Last Name'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ProfessorProfileForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })

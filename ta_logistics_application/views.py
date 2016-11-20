@@ -10,8 +10,8 @@ import re
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail, EmailMessage
-from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm
-from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields
+from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm, ProfessorProfileForm
+from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields, Professors
 import ta_logistics_application.models
 from django.contrib.auth.views import login
 
@@ -51,6 +51,8 @@ def group_index(request):
         if not request.user.groups.filter(name="professors").exists():
             request.user.groups.set([1])
         if request.user.groups.filter(name="professors").exists():
+            if not Professors.objects.filter(pk=request.user.id).exists():
+                return professor_profile(request)
             return professor_index(request)
         elif request.user.groups.filter(name="students").exists():
             if not Students.objects.filter(pk=request.user.id).exists():
@@ -149,6 +151,28 @@ def student_application(request):# s_id):
 
 
 ################ Professor Context ################
+
+@login_required()
+#@user_passes_test(check_student)
+def professor_profile(request):
+    """
+    This view will be shown to professors the first time they login to the app or if you then want to
+    edit any information in their profile.
+    :param request:
+    :return:
+    """
+    if not check_faculty(request.user):
+        raise PermissionDenied
+    if request.method == 'POST':
+        form = ProfessorProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # file is saved
+            form.save()
+            return professor_index(request)
+    else:
+        form = ProfessorProfileForm()
+    return render(request, 'ta_logistics_application/professor/professor_information.html', {'form': form})
+
 
 @login_required(login_url='login')
 #@user_passes_test(check_faculty)
