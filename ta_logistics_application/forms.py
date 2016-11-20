@@ -62,7 +62,6 @@ class ApplicationForm(forms.Form):
         self.student_id = kwargs.pop('student_id')
         super(ApplicationForm, self).__init__(*args, **kwargs)
 
-        self.application_status_id = 0
         self.hiring_status_id = 0
         self.field_text_list = {}
         # MAYBE LATER: Add student data fields as un-editable fields with student info
@@ -123,7 +122,6 @@ class ApplicationForm(forms.Form):
         application = ClassApplicants(
             class_id=self.class_id,
             student_id=self.student_id,
-            application_status_id=self.application_status_id,
             hiring_status_id=self.hiring_status_id,
             personal_statement=data['personal_statement'],
             class_grade=data['class_grade'],
@@ -145,7 +143,7 @@ class CreateClassForm(forms.ModelForm):
             'professor_id': forms.HiddenInput(),
             'class_listing_id': forms.TextInput(attrs={'placeholder': 'e.g. CSE331'}),
             'active_semester': forms.Select(choices=data_defs.getActiveSemesters(), attrs={'placeholder': 'Select Active Semester'}),
-            'is_active': forms.Select(choices=data_defs.BOOL_YES_NO),
+            'is_active': forms.Select(choices=data_defs.BOOL_ACTIVE),
             'class_name': forms.TextInput(attrs={'placeholder': 'e.g. Introduction to Algorithm Analysis and Design'}),
             'available_hours': forms.NumberInput(attrs={'placeholder': 'Estimate If You Don\'t Know Yet'}),
             'selected_optional_field_ids': forms.HiddenInput(),
