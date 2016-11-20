@@ -33,11 +33,7 @@ def login(request):
 def group_index(request):
     if request.user.is_authenticated():
         if request.user.groups.all()[0].name == "faculty":
-<<<<<<< HEAD
-            template = loader.get_template('ta_logistics_application/professor/professor_index.html')
-=======
             return render(request, 'ta_logistics_application/professor/professor_index.html')
->>>>>>> a4b1614fb82fc5142f1e339b93b7d1f1d3e67499
         elif request.user.groups.all()[0].name == "student":
             template = loader.get_template('ta_logistics_application/student/profile.html')
             return HttpResponse(template.render())
