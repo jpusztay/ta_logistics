@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
-from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields
+from django.forms import ModelForm, Textarea
+from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields, Professors
 
 
 #String Constants go HERE:
@@ -190,3 +191,31 @@ class AddOptionalFieldForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+
+class ProfessorsForm(ModelForm):
+    class Meta:
+        model = Professors
+        fields = ['id', 'ubit_name', 'first_Name', 'last_name']
+        widgets = {
+            'id': forms.Textarea(attrs={'required': True},),
+            'ubit_name': forms.Textarea(attrs={'required': True},),
+            'first_name': forms.Textarea(attrs={'required': True},),
+            'last_name': forms.Textarea(attrs={'required': True},),
+        }
+        labels = {
+            'id': 'ID',
+            'ubit_name': 'UBIT name',
+            'first_name': 'First name',
+            'last_name': 'Last name',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(CreateClassForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+       # form = ProfessorsForm()
+       # Professors = Professors.objects.get(pk=1)
+        #form = ProfessorsForm(instance=Professors)
