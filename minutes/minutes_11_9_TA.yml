@@ -1,0 +1,18 @@
+date: November 9, 2016
+meeting_type: ta # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <komlanaz>, <fgpinnoc>, <jrhoeber>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: as well as drop down pages, improved views and forms},
+  {ubit: <fgpinnoc>, progress: looked into fixing student contexts},
+  {ubit: <komlanaz>, progress: further modification of admin panel},
+  {ubit: <josephpu>, progress: issues with account creation investigated and looked into}]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: LDAP}  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+    redirects need to be fixed
+    issues with accessibility by the wrong user group to certain contexts
+    Discussed current group progress in sprint 4
+    talked about various issues including make up philosophy points

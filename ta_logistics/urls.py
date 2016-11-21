@@ -15,17 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.contrib.auth import views
+from django.contrib.auth import views as otherviews
 from ta_logistics_application.forms import LoginForm
+from ta_logistics_application import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
 
     url(r'', include('ta_logistics_application.urls')),
 
-    url(r'^login/$', views.login,
-        {'template_name': 'ta_logistics_application/login.html', 'authentication_form': LoginForm}, name='login'),
+    url(r'^login/$', views.custom_login, name='login'),
 
-    url(r'^logout/$', views.logout, {'next_page': '/login'}),
+    url(r'^logout/$', otherviews.logout, {'next_page': '/login'}),
+
+    url(r'^account/', include('registration.backends.hmac.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
 ]

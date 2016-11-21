@@ -3,14 +3,13 @@
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>Create Account</h2>
-        </div>
-        <div>
-            <form method="post" action ="" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            <h2>Welcome to TA Logistics </h2>
+            <h4>The TA Hiring app of the future</h4>
         </div>
     </div>
+    <script>
+        {% if not user.is_authenticated %}
+            $("ul.nav.navbar-nav.navbar-right").css("display","none");
+        {% endif %}
+    </script>
 {% endblock %}

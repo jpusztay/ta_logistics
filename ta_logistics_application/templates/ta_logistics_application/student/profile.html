@@ -3,48 +3,11 @@
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>NAME WILL BE HERE</h2>
+            <h2>Student Profile</h2>
         </div>
 
         <div class="footnotes">
-
             <form method="post" action ="" enctype="multipart/form-data">
-
-                <div class="form-group">
-                    <label for="first-name-field">First Name</label>
-                    <input class="form-control" id="first-name-field" placeholder="Enter First Name">
-                </div>
-                <div class="form-group">
-                    <label for="last-name-field">Last Name</label>
-                    <input class="form-control" id="last-name-field" placeholder="Enter Last Name">
-                </div>
-                <label for="email-field">Email Address</label>
-
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="UBIT Name" aria-describedby="basic-addon2">
-                        <span class="input-group-addon" id="email-field">@buffalo.edu</span>
-                    </div>
-                </div>
-
-
-                <div class="form-group">
-                    <label for="GPASelect">Select GPA</label>
-                    <select class="form-control" id="GPASelect">
-                        <option>4.0</option>
-                        <option>3.9</option>
-                        <option>3.8</option>
-                        <option>3.7</option>
-                        <option>3.6</option>
-                        <option>3.5</option>
-                        <option>3.4</option>
-                        <option>3.3</option>
-                        <option>3.2</option>
-                        <option>3.1</option>
-                        <option>3.0</option>
-                        <option>&lt; 3.0</option>
-                    </select>
-                </div>
                 <div class="form-group">
                     <label for="exampleInputFile">Resume</label>
                     {% csrf_token %}
@@ -53,8 +16,6 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
-
         </div>
     </div>
 {% endblock %}
-

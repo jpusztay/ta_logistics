@@ -1,5 +1,10 @@
 {% extends 'ta_logistics_application/base.html' %}
 
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/js/professor_index.js"></script>
+{% endblock %}
+
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
@@ -7,27 +12,57 @@
         </div>
         <div>
             {% if current_class_list %}
-                <table class = 'table'>
+            <form id="button_form" method="post">
+            {% csrf_token %}
+                <input type="checkbox" id="show_inactive"> Show Inactive Classes</input>
+                <table class = 'table display' id="professor_class_table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Class ID</th>
                             <th>Class Name</th>
                             <th>Number of applicants</th>
+                            <th>Is Active</th>
+                            <th>Semester</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for class in current_class_list %}
+                        {% if class.is_active %}
                         <tr>
+                            <td><input name="class_{{ class.id }}" value="" class="select-class" type="checkbox" /></td>
                             <td><a href="{% url 'professor_class_applicants'%}?class_id={{ class.id }}">{{ class.class_listing_id }}</a></td>
                             <td>{{ class.class_name }}</td>
-                            <td></td>
+                            <td>{{ class.applicant_count }}</td>
+                            <td>{{ class.is_active }}</td>
+                            <td>{{ class.active_semester }}</td>
                         </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                    <tbody id="inactive_classes" style="display: none;">
+                    {% for class in current_class_list %}
+                        {% if not class.is_active %}
+                        <tr>
+                            <td><input name="class_{{ class.id }}" value="" class="select-class" type="checkbox" /></td>
+                            <td><a href="{% url 'professor_class_applicants'%}?class_id={{ class.id }}">{{ class.class_listing_id }}</a></td>
+                            <td>{{ class.class_name }}</td>
+                            <td>{{ class.applicant_count }}</td>
+                            <td>{{ class.is_active }}</td>
+                            <td>{{ class.active_semester }}</td>
+                        </tr>
+                        {% endif %}
                     {% endfor %}
                     </tbody>
                 </table>
+                <br>
+                <button class="btn btn-success" type="submit" form="button_form" name="set_active">Make Active</button>
+                <button class="btn btn-danger" type="submit" form="button_form" name="set_inactive">Make Inactive</button>
+            </form>
             {% else %}
-                <p>No classes yet</p>
+                <p>You don't have any classes yet!</p>
             {% endif %}
+            <br>
             <a href="{% url 'professor_create_class' %}" class="btn btn-primary">Create New Class</a>
         </div>
     </div>

@@ -2,12 +2,18 @@ from django.db import models
 from django.core.validators import validate_comma_separated_integer_list, MaxValueValidator, MinValueValidator
 from ta_logistics_application.validators import validate_optional_field_json
 from collections import OrderedDict
+from django.conf import settings
 import datetime, json
 
+
 class DataDefinitions():
-    BOOL_YES_NO = (
+    BOOL_ACTIVE = (
         (1, 'Yes'),
         (0, 'Activate Later')
+    )
+    BOOL_YES_NO = (
+        (1, 'Yes'),
+        (0, 'No')
     )
     GPA_CHOICES = (
         (4.0, '4.0'),
@@ -23,6 +29,15 @@ class DataDefinitions():
         (3.0, '3.0'),
         (-1, '< 3.0'),
     )
+
+    NUM_CREDITS_CHOICES = (
+        (0, 0),
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+    )
+
     GRADE_CHOICES = (
         ('A','A'),
         ('A-','A-'),
@@ -38,26 +53,33 @@ class DataDefinitions():
         ('TEXT', 'Text String'),
         ('INT', 'Integer Number'),
         ('REAL', 'Decimal Number'),
+        ('CMFT', 'Programming Language Comfort Level')
     )
 
     COMFORT_LVLS = (
         ('Expert','Expert'),
         ('Advanced','Advanced'),
         ('Moderate','Moderate'),
-        ('Novince','Novince'),
+        ('Novice','Novice'),
         ('None','None'),
-    )
-    APPLICATION_STATUS = (
-        (0, 'Application Submitted'),
-        (1, 'Application Pending'),
-        (2, 'Application Complete'),
     )
     HIRING_STATUS = (
         (0, 'Pending Review'),
         (1, 'Rejected'),
         (2, 'Interviewing'),
-        (3, 'Accepted'),
+        (3, 'Given Offer'),
         (4, 'Wait Listed'),
+        (5, 'Accepted Offer'),
+        (6, 'Declined Offer'),
+    )
+    APPLICATION_STATUS = (
+        (0, 'Application Pending'),
+        (1, 'Application Complete'),
+        (2, 'Application Pending'),
+        (3, 'Given Offer'),
+        (4, 'Application Pending'),
+        (5, 'Accepted Offer'),
+        (6, 'Declined Offer'),
     )
 
     STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
@@ -84,6 +106,25 @@ class DataDefinitions():
             ret.append((i.id, i.field_text))
         return tuple(ret)
 
+    def getStudentAppliedClasses(self, student_id):
+        applications = ClassApplicants.objects.filter(student_id=student_id)
+        data = []
+        for application in applications:
+            app_data = OrderedDict()
+            curr_class = Classes.objects.get(id=application.class_id)
+            app_data['class_id'] = curr_class.class_listing_id
+            app_data['id'] = curr_class.id
+            app_data['pending_offer'] = application.pending_offer
+            for choice_tuple in self.APPLICATION_STATUS:
+                choice_id, choice_name = choice_tuple
+                if choice_id == application.hiring_status_id:
+                    app_data['application_status'] = choice_name
+                    break
+            data.append(app_data)
+        return data
+
+
+
     def getStudentDataForApplicantsView(self, class_id):
         applicants = ClassApplicants.objects.filter(class_id=class_id).select_related()
         main_data_fields = ['ubit_name', 'first_name', 'last_name', 'hiring_status', 'class_grade', 'gpa',]
@@ -93,28 +134,33 @@ class DataDefinitions():
         secondary_student_data = []
         optional_field_ids = list(map(int, Classes.objects.get(id=class_id).selected_optional_field_ids.split(',')))
         for applicant in raw_applicant_data:
-            index = len(main_student_data)
             main_student_data.append(OrderedDict())
-            secondary_student_data.append(OrderedDict())
+            secondary_student_data = OrderedDict()
             for field in main_data_fields:
                 if field == 'hiring_status':
                     for tup in self.HIRING_STATUS:
                         id, name = tup
                         if id == applicant.hiring_status_id:
-                            main_student_data[index][field] = name
+                            main_student_data[-1][field] = name
                             break
                 else:
-                    main_student_data[index][field] = getattr(applicant, field)
+                    main_student_data[-1][field] = getattr(applicant, field)
             optional_field_data = json.loads(applicant.optional_fields)
             for ident in optional_field_ids:
                 opt_field = ApplicationFields.objects.get(id=ident).field_name
-                main_student_data[index][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
+                main_student_data[-1][opt_field] = optional_field_data[self.OPTIONAL_DATA][opt_field]
             for field in secondary_data_fields:
-                secondary_student_data[index][field] = getattr(applicant, field)
-        return main_student_data, secondary_student_data
+                if field == 'resume':
+                    secondary_student_data[field] = getattr(applicant, field)
+                else:
+                    secondary_student_data[field] = getattr(applicant, field)
+            main_student_data[-1]['secondary_student_data'] = secondary_student_data
+
+        return main_student_data
 
 
 class Students(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True)
     ubit_name = models.CharField(max_length=10)
     person_number = models.CharField(max_length=8)
     first_name = models.CharField(max_length=30)
@@ -136,20 +182,24 @@ class Classes(models.Model):
     is_active = models.BooleanField(default=False)
     selected_optional_field_ids = models.CharField(max_length = 200, validators=[validate_comma_separated_integer_list], null=True)
 
+
 class ClassApplicants(models.Model):
-    #Linked to auto incremented ID of classes table
+    # Linked to auto incremented ID of classes table
     class_id = models.IntegerField()
-    #Linked to auto incremented ID of students table
+    # Linked to auto incremented ID of students table
     student_id = models.IntegerField()
-    application_status_id = models.IntegerField(choices=DataDefinitions.APPLICATION_STATUS, default=0)
     hiring_status_id = models.IntegerField(choices=DataDefinitions.HIRING_STATUS, default=0)
     date_submitted = models.DateTimeField(auto_now_add=True)
     personal_statement = models.CharField(max_length=400)
     class_grade = models.CharField(max_length=4, choices=DataDefinitions.GRADE_CHOICES)
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
+    number_credits = models.IntegerField(choices=DataDefinitions.NUM_CREDITS_CHOICES, default=0)
+    is_registered_for_credit = models.BooleanField(default=False)
+    pending_offer = models.BooleanField(default=False)
 
 
 class Professors(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True)
     ubit_name = models.CharField(max_length=10)
     first_name = models.CharField(max_length=15)
     last_name = models.CharField(max_length=15)
@@ -158,8 +208,16 @@ class Professors(models.Model):
 class ApplicationFields(models.Model):
     field_name = models.CharField(max_length=30)
     field_text = models.CharField(max_length=30)
-    is_default = models.BooleanField()
-    from_student = models.BooleanField()
+    is_default = models.BooleanField(default=0)
+    from_student = models.BooleanField(default=0)
     data_type = models.CharField(max_length=6, choices=DataDefinitions.FIELD_TYPE_CHOICES)
-    max_length = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(400)])
+    max_length = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(400)], default=0)
+    select_options = models.CharField(max_length=500, default="")
 
+
+class PayrollInfo(models.Model):
+    has_ssn = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    been_ub_employee = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    been_student_assistant = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    other_on_campus_job = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    fall_and_spring = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)

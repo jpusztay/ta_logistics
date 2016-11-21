@@ -1,0 +1,19 @@
+date: November 2, 2016
+meeting_type: group # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <komlanaz>, <jrhoeber>, <fgpinnoc>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: Continued fixes to professor contexts},
+  {ubit: <josephpu>, progress: None},
+  {ubit: <fgpinnoc>, progress: Added in student page},
+  {ubit: <komlanaz>, progress: changes to admin page},
+  ]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: LDAP Needed}
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  LDAP is not coming, moving to full on account creation
+  Student contexts need to be fixed
+  Jordan helped Komlan begin to fix issues with git

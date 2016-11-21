@@ -3,10 +3,11 @@
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>Application</h2>
+            <h2>{{ selected_class }} - Application for {{ request.user }}</h2>
         </div>
         <div class="footnotes">
-            <form method="post" action ="" enctype="multipart/form-data">
+
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Submit</button>

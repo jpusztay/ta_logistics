@@ -1,0 +1,18 @@
+date: November 16, 2016
+meeting_type: group # meeting_type can "group", "ta", or "instructor"
+attendance: [<jrhoeber>, <fgpinnoc>, <komlanaz>, <josephpu>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: made active classes changeable and fixed issues with student contexts},
+  {ubit: <fgpinnoc>, progress: Class listing page finished},
+  {ubit: <komlanaz>, progress: Altered fields in admin page},
+  {ubit: <josephpu>, progress: account creation completed with email capability}]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: LDAP}]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+    Discussed any residual issues to change before the end of the sprint
+    discussed packaging the application for deployment
+    began searching for bugs and discussed any changes or issues that need to be seen to with the auth stuff
+    tested the application
