@@ -1,0 +1,19 @@
+date: November 9, 2016
+meeting_type: group # meeting_type can "group", "ta", or "instructor"
+attendance: [<jrhoeber>, <josephpu>, <komlanaz>, <fgpinnoc>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: Drop down menus fixed},
+  {ubit: <komlanaz>, progress: continued work on admin page},
+  {ubit: <fgpinnoc>, progress: Student pages finished.},
+  {ubit: <josephpu>, progress: Set up application on jarvis. it is now live in a dev env.}]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: LDAP}
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+    The server is now live
+    group discussed beta testing potential
+    discussed the testing of testable functions
+    discussed necessity of account creation and the function of django-registration
