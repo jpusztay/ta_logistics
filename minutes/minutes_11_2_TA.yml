@@ -1,0 +1,17 @@
+date: November 2, 2016
+meeting_type: ta # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <fgpinnoc>, <komlanaz>, <jrhoeber>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <jrhoeber>, progress: Professor context fixes},
+  {ubit: <fgpinnoc>, progress: student pages now exist},
+  {ubit: <komlanaz>, progress: customized admin pages},
+  {ubit: <josephpu>, progress: researched built in account creation}]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: LDAP would be cool}
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  Group discussed progress with andy as well as sprint 4 procedures
+  continued fixing komlans git repo

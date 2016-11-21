@@ -40,12 +40,14 @@
 
                         <ul class="nav navbar-nav" id="overrides">
                             <li class="dropdown" id="overrides">
-                                {% ifequal user.groups.all.0 'professors' %}
+                            {% for group in user.groups.all %}
+                                {% ifequal group.name 'professors' %}
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="overrides">Options <span class="caret"></span></a>
                                     <ul class="dropdown-menu" role="menu" id="overrides">
                                         <li ><a href="{% url 'view_optional_fields' %}" id="overrides">View/Edit Optional Fields</a></li>
                                     </ul>
                                 {% endifequal %}
+                            {% endfor %}
                             </li>
                         </ul>
 

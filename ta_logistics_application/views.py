@@ -101,7 +101,7 @@ def student_profile(request):
         if form.is_valid():
             # file is saved
             form.save()
-            template = loader.get_template('ta_logistics_application/student/submission_received.html')
+            template = loader.get_template('ta_logistics_application/student/profile.html')
             return HttpResponse(template.render())
     else:
         form = StudentProfileForm()
@@ -119,7 +119,7 @@ def student_edit_profile(request):
         if form.is_valid():
             # file is saved
             form.save()
-            template = loader.get_template('ta_logistics_application/student/submission_received.html')
+            template = loader.get_template('ta_logistics_application/student/profile.html')
             return HttpResponse(template.render())
     else:
         form = StudentProfileForm(initial=dict(Students.objects.get(id=request.user.id).__dict__))
