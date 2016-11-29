@@ -104,6 +104,7 @@ class DataDefinitions():
         ret = []
         for i in ApplicationFields.objects.filter(is_default=False):
             ret.append((i.id, i.field_text))
+        print(ret)
         return tuple(ret)
 
     def getStudentAppliedClasses(self, student_id):
@@ -120,7 +121,6 @@ class DataDefinitions():
                     break
             data.append(app_data)
         return data
-
 
 
     def getStudentDataForApplicantsView(self, class_id):
