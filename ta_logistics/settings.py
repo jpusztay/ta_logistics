@@ -118,18 +118,22 @@ USE_TZ = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'cse442.talogistics@gmail.com'
-# EMAIL_HOST_PASSWORD = 'talogistics123'
-# DEFAULT_FROM_EMAIL = 'testing@testing.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'cse442.talogistics@gmail.com'
+EMAIL_HOST_PASSWORD = 'talogistics123'
+DEFAULT_FROM_EMAIL = 'testing@testing.com'
 
 # tell it where to redirect, go home after login makes sense to me.
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/home'
 
+# Account activation stuff for django-registration
+# You will have 7 days to activate or it won't work, you default to student
+ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_DEFAULT_GROUP_NAME = "students"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 

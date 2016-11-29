@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
-from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields
+from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields, Professors
+from registration.forms import RegistrationForm
 
 
 #String Constants go HERE:
@@ -13,6 +14,7 @@ class LoginForm(AuthenticationForm):
                                widget=forms.TextInput(attrs={'class': 'form-control', 'name': 'username'}))
     password = forms.CharField(label="Password", max_length=30,
                                widget=forms.PasswordInput(attrs={'class': 'form-control', 'name': 'password'}))
+
 
 
 ################ Student Context ################
@@ -30,7 +32,7 @@ class StudentProfileForm(forms.ModelForm):
 
     class Meta:
         model = Students
-        fields = ['ubit_name', 'person_number', 'first_name', 'last_name', 'gpa', 'resume', 'teaching_experience']
+        fields = ['ubit_name', 'person_number', 'first_name', 'last_name', 'gpa', 'resume', 'teaching_experience', 'id']
         widgets = {
             'ubit_name': forms.TextInput(attrs={'placeholder': 'Enter UBIT Name'}),
             'person_number': forms.TextInput(attrs={'placeholder': 'Enter Person Number'}),
@@ -38,6 +40,7 @@ class StudentProfileForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'placeholder': 'Enter Last Name'}),
             'teaching_experience': forms.Textarea(attrs={'placeholder': 'Enter a Brief Summary of Your Teaching Experience'}),
             'gpa': forms.Select(attrs={'placeholder': 'Select GPA'}),
+            'id': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -60,7 +63,6 @@ class ApplicationForm(forms.Form):
         self.student_id = kwargs.pop('student_id')
         super(ApplicationForm, self).__init__(*args, **kwargs)
 
-        self.application_status_id = 0
         self.hiring_status_id = 0
         self.field_text_list = {}
         # MAYBE LATER: Add student data fields as un-editable fields with student info
@@ -121,7 +123,6 @@ class ApplicationForm(forms.Form):
         application = ClassApplicants(
             class_id=self.class_id,
             student_id=self.student_id,
-            application_status_id=self.application_status_id,
             hiring_status_id=self.hiring_status_id,
             personal_statement=data['personal_statement'],
             class_grade=data['class_grade'],
@@ -143,7 +144,7 @@ class CreateClassForm(forms.ModelForm):
             'professor_id': forms.HiddenInput(),
             'class_listing_id': forms.TextInput(attrs={'placeholder': 'e.g. CSE331'}),
             'active_semester': forms.Select(choices=data_defs.getActiveSemesters(), attrs={'placeholder': 'Select Active Semester'}),
-            'is_active': forms.Select(choices=data_defs.BOOL_YES_NO),
+            'is_active': forms.Select(choices=data_defs.BOOL_ACTIVE),
             'class_name': forms.TextInput(attrs={'placeholder': 'e.g. Introduction to Algorithm Analysis and Design'}),
             'available_hours': forms.NumberInput(attrs={'placeholder': 'Estimate If You Don\'t Know Yet'}),
             'selected_optional_field_ids': forms.HiddenInput(),
@@ -199,6 +200,25 @@ class AddOptionalFieldForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AddOptionalFieldForm, self).__init__(*args, **kwargs)
         self.fields['select_options'].required = False
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+
+class ProfessorProfileForm(forms.ModelForm):
+    class Meta:
+        model = Professors
+        fields = ['ubit_name', 'first_name', 'last_name', 'id']
+        widgets = {
+            'ubit_name': forms.TextInput(attrs={'placeholder': 'Enter your UBIT'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'Enter First Name'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Enter Last Name'}),
+            'id': forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ProfessorProfileForm, self).__init__(*args, **kwargs)
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'

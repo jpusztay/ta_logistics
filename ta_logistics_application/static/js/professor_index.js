@@ -7,12 +7,11 @@ $( document ).ready( function () {
     });
 
     $('#show_inactive').change(function () {
-        console.log
         if($('#inactive_classes').is(":visible")){
             $('#inactive_classes').hide();
         } else {
             $('#inactive_classes').show();
         }
-    })
+    });
 
 });

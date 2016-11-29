@@ -1,0 +1,19 @@
+date: November 15, 2016
+meeting_type: ta # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <jrhoeber>, <fgpinnoc>, <komlanaz>]
+absent: []
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <fgpinnoc>, progress: Discussed conflicting context issues},
+  {ubit: <komlanaz>, progress: working on fixing git repo, continued alterations for admin panel},
+  {ubit: <jrhoeber>, progress: Fixed context issues},
+  {ubit: <josephpu>, progress: Investigated inappropriate context accesss issues for group}]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  {ubit: <josephpu>, issue: LDAP}
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+    discussed residual changes to be made as well as extra features that will be implemented in the future with continued support
+    discussed the upcoming sprint 5 requirements as well as scheduling our presentation
+    continued to talk about the bugs in the application as well as their resolution
+    set up remaining issues and assigned them to members to be completed for the weekend.
