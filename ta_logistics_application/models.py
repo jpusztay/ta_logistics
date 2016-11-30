@@ -104,7 +104,6 @@ class DataDefinitions():
         ret = []
         for i in ApplicationFields.objects.filter(is_default=False):
             ret.append((i.id, i.field_text))
-        print(ret)
         return tuple(ret)
 
     def getStudentAppliedClasses(self, student_id):
@@ -112,8 +111,10 @@ class DataDefinitions():
         data = []
         for application in applications:
             app_data = OrderedDict()
-            app_data['class_id'] = Classes.objects.get(id=application.class_id).class_listing_id
-            app_data['given_offer'] = application.given_offer
+            curr_class = Classes.objects.get(id=application.class_id)
+            app_data['class_id'] = curr_class.class_listing_id
+            app_data['id'] = curr_class.id
+            app_data['pending_offer'] = application.pending_offer
             for choice_tuple in self.APPLICATION_STATUS:
                 choice_id, choice_name = choice_tuple
                 if choice_id == application.hiring_status_id:
@@ -193,7 +194,7 @@ class ClassApplicants(models.Model):
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
     number_credits = models.IntegerField(choices=DataDefinitions.NUM_CREDITS_CHOICES, default=0)
     is_registered_for_credit = models.BooleanField(default=False)
-    given_offer = models.BooleanField(default=False)
+    pending_offer = models.BooleanField(default=False)
 
 
 class Professors(models.Model):

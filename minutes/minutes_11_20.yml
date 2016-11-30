@@ -1,0 +1,17 @@
+date: November 20, 2016
+meeting_type: group # meeting_type can "group", "ta", or "instructor"
+attendance: [<josephpu>, <jrhoeber>, <komlanaz>]
+absent: [<fgpinnoc>]
+excused_absences: [ # Any legitamite excuses for absent team members
+  ]
+task_progress: [ # All group members must be included here even if they haven't made any progress since the last meeting
+  {ubit: <komlanaz>, progress: Added residual functionality to admin page for addition of professors},
+  {ubit: <jrhoeber>, progress: added schema for jen and donna pages, as well as fixed issues wtih existing models and contexts},
+  {ubit: <fgpinnoc>, progress: None},
+  {ubit: <josephpu>, progress: Fixed all redirect issues and customized account creation pages. Fixed issues with group access, etc.}]
+issues: [ # Post any issues here. Issues that cannot be addressed by the group should especially be included
+  ]
+Notes:  | # Anything covered in the meeting that doesn't fit elsewhere.
+  Bugs were worked out continually throughout the meeting and the application is fully functional
+  tested the application and discussed what to do next as far as adding "optional" functionality down the road
+  discussed packaging the application and a timeline for that, as well as getting it fully functional for the server

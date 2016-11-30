@@ -9,6 +9,7 @@ urlpatterns = [
 
     #Student
     url(r'^student/profile/$', views.student_profile, name='student_profile'),
+    url(r'^student/edit_profile/$', views.student_edit_profile, name='student_edit_profile'),
     url(r'^student/$', views.student_index, name='student_index'),
     url(r'^student/class_list', views.student_class_list, name='student_class_list'),
     url(r'^student/application/$', views.student_application, name='student_application'),
