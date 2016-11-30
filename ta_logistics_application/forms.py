@@ -24,7 +24,6 @@ class ClassListForm(forms.Form):
     """
 
     class_list = forms.ModelChoiceField(queryset=Classes.objects.values())
-    print(class_list)
 
 
 
@@ -175,6 +174,8 @@ class OptionalFieldsForm(forms.Form):
                 'class': 'optional_field_check',
                 'id': 'optional_field_check'
             })
+    def __init__(self, *args, **kwargs):
+        super(OptionalFieldsForm, self).__init__(*args, **kwargs)
 
 
 class AddOptionalFieldForm(forms.ModelForm):
