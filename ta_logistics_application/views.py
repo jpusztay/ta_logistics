@@ -133,7 +133,7 @@ def student_class_list(request):
         raise PermissionDenied
     if request.method == 'POST':
         class_id = request.POST['selected_class']
-        return redirect('/student/application?class_id='+str(class_id))
+        return redirect('/utalize/student/application?class_id='+str(class_id))
 
     class_list = Classes.objects.filter(is_active=True).values('id', 'class_listing_id', 'class_name').order_by('class_listing_id')
     context = {
@@ -328,9 +328,9 @@ def view_optional_fields(request):
             for key, val in request.POST.items():
                 if key.startswith('id_'):
                     field_id = key.split('_')[-1]
-                    return redirect('edit_optional_field.html?field_id=' + field_id)
+                    return redirect('utalize/edit_optional_field.html?field_id=' + field_id)
         elif 'create' in request_list:
-            return redirect('add_optional_field.html')
+            return redirect('utalize/add_optional_field.html')
     fields = ApplicationFields.objects.filter(is_default=False)
     context = {
         'fields': fields,
@@ -358,7 +358,7 @@ def edit_optional_field(request):
         field.max_length = max_length
         field.select_options = ','.join(select_options)
         field.save()
-        return redirect('view_optional_fields.html')
+        return redirect('utalize/view_optional_fields.html')
     field = dict(ApplicationFields.objects.get(id=field_id).__dict__)
     select_options_str = field['select_options']
     select_options = select_options_str.split(',')
@@ -389,7 +389,7 @@ def add_optional_field(request):
         if form.is_valid():
             # file is saved
             form.save()
-            return redirect('view_optional_fields.html')
+            return redirect('utalize/view_optional_fields.html')
         else:
             print(form.errors)
 
