@@ -154,8 +154,7 @@ def student_application(request):# s_id):
         form = ApplicationForm(request.POST, class_id=class_id, student_id=s_id)
         if form.is_valid():
             form.save()
-            template = loader.get_template('ta_logistics_application/student/submission_received.html')
-            return HttpResponse(template.render())
+            return redirect(student_index)
     selected_class = Classes.objects.get(id=class_id).class_listing_id
     form = ApplicationForm(class_id=class_id, student_id=s_id)
     context = {
