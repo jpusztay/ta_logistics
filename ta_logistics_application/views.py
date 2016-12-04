@@ -181,7 +181,7 @@ def professor_profile(request):
         if form.is_valid():
             # file is saved
             form.save()
-            return HttpResponseRedirect("/home")
+            return HttpResponseRedirect("utalize/home")
     else:
         form = ProfessorProfileForm()
     return render(request, 'ta_logistics_application/professor/professor_information.html', {'form': form})
@@ -326,9 +326,9 @@ def view_optional_fields(request):
             for key, val in request.POST.items():
                 if key.startswith('id_'):
                     field_id = key.split('_')[-1]
-                    return redirect('utalize/edit_optional_field.html?field_id=' + field_id)
+                    return redirect('edit_optional_field.html?field_id=' + field_id)
         elif 'create' in request_list:
-            return redirect('utalize/add_optional_field.html')
+            return redirect('add_optional_field.html')
     fields = ApplicationFields.objects.filter(is_default=False)
     context = {
         'fields': fields,
@@ -356,7 +356,7 @@ def edit_optional_field(request):
         field.max_length = max_length
         field.select_options = ','.join(select_options)
         field.save()
-        return redirect('utalize/view_optional_fields.html')
+        return redirect('view_optional_fields.html')
     field = dict(ApplicationFields.objects.get(id=field_id).__dict__)
     select_options_str = field['select_options']
     select_options = select_options_str.split(',')
@@ -387,7 +387,7 @@ def add_optional_field(request):
         if form.is_valid():
             # file is saved
             form.save()
-            return redirect('utalize/view_optional_fields.html')
+            return redirect('view_optional_fields.html')
         else:
             print(form.errors)
 
