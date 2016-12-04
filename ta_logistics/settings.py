@@ -127,8 +127,8 @@ EMAIL_HOST_PASSWORD = 'talogistics123'
 DEFAULT_FROM_EMAIL = 'testing@testing.com'
 
 # tell it where to redirect, go home after login makes sense to me.
-LOGIN_URL = '/utalize/login'
-LOGIN_REDIRECT_URL = '/utalize/home'
+LOGIN_URL = 'utalize/login'
+LOGIN_REDIRECT_URL = 'utalize/home'
 
 # Account activation stuff for django-registration
 # You will have 7 days to activate or it won't work, you default to student
