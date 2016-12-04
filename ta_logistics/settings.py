@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '0@y=fgry_-s^xf3k^fvqp&cm*la)-6a44+i)oba&jcyw(&j73v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [jarvis.cse.buffalo.edu]
+ALLOWED_HOSTS = ["jarvis.cse.buffalo.edu"]
 
 
 # Application definition
@@ -127,8 +127,8 @@ EMAIL_HOST_PASSWORD = 'talogistics123'
 DEFAULT_FROM_EMAIL = 'testing@testing.com'
 
 # tell it where to redirect, go home after login makes sense to me.
-LOGIN_URL = 'utalize/login'
-LOGIN_REDIRECT_URL = 'utalize/home'
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = ''
 
 # Account activation stuff for django-registration
 # You will have 7 days to activate or it won't work, you default to student

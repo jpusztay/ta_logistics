@@ -25,11 +25,11 @@ urlpatterns = [
 
     url(r'', include('ta_logistics_application.urls')),
 
-    url(r'^utalize/login/$', views.custom_login, name='login'),
+    url(r'^login/$', views.custom_login, name='login'),
 
-    url(r'^utalize/logout/$', otherviews.logout, {'next_page': '/login'}),
+    url(r'^logout/$', otherviews.logout, {'next_page': '/login'}),
 
-    url(r'^utalize/account/', include('registration.backends.hmac.urls')),
+    url(r'^account/', include('registration.backends.hmac.urls')),
 
-    url(r'^utalize/admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 ]
