@@ -24,7 +24,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'', include('ta_logistics_application.urls')),
     url(r'^login/$', views.custom_login, name='login'),
-    url(r'^logout/$', otherviews.logout, {'next_page': '/login'}),
+    url(r'^logout/$', otherviews.logout, {'next_page': 'login'}),
     url(r'^account/', include('registration.backends.hmac.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]
