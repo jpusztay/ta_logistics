@@ -44,7 +44,6 @@ def check_student(user):
 @login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
-        print(str(request.user.id))
         if request.user.is_staff:
             return HttpResponseRedirect("/admin/")
         if not request.user.groups.filter(name="professors").exists():
@@ -65,16 +64,9 @@ def group_index(request):
 @login_required()
 #@user_passes_test(check_student)
 def student_index(request):
-    """
-    This view will display the list of classes that the student has applied to TA from the "status"
-    table.
-    :param request:
-    :return:
-    """
     if not check_student(request.user):
         raise PermissionDenied
     if request.method == "POST":
-        print(request.POST)
         accept_offer = "accept" in request.POST;
         for key, val in request.POST.items():
             if key.startswith("class_"):
@@ -101,12 +93,6 @@ def student_index(request):
 @login_required()
 #@user_passes_test(check_student)
 def student_profile(request):
-    """
-    This view will be shown to students the first time they login to the app or if you then want to
-    edit any information in their profile.
-    :param request:
-    :return:
-    """
     if not check_student(request.user):
         raise PermissionDenied
     if request.method == 'POST':
@@ -124,12 +110,25 @@ def student_profile(request):
 
 @login_required()
 #@user_passes_test(check_student)
+def student_edit_profile(request):
+    if not check_student(request.user):
+        raise PermissionDenied
+    if request.method == 'POST':
+        request.POST['id'] = request.user.id
+        form = StudentProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # file is saved
+            form.save()
+            template = loader.get_template('ta_logistics_application/student/profile.html')
+            return HttpResponse(template.render())
+    else:
+        form = StudentProfileForm(initial=dict(Students.objects.get(id=request.user.id).__dict__))
+    return render(request, 'ta_logistics_application/student/edit_profile.html', {'form': form})
+
+
+@login_required()
+#@user_passes_test(check_student)
 def student_class_list(request):
-    """
-    This view will display a dropdown list of classes that students can apply to TA.
-    :param request:
-    :return:
-    """
     if not check_student(request.user):
         raise PermissionDenied
     if request.method == 'POST':
@@ -155,8 +154,7 @@ def student_application(request):# s_id):
         form = ApplicationForm(request.POST, class_id=class_id, student_id=s_id)
         if form.is_valid():
             form.save()
-            template = loader.get_template('ta_logistics_application/student/submission_received.html')
-            return HttpResponse(template.render())
+            return redirect(student_index)
     selected_class = Classes.objects.get(id=class_id).class_listing_id
     form = ApplicationForm(class_id=class_id, student_id=s_id)
     context = {
@@ -181,7 +179,6 @@ def professor_profile(request):
         raise PermissionDenied
     if request.method == 'POST':
         request.POST['id'] = request.user.id
-        print(request.POST)
         form = ProfessorProfileForm(request.POST)
         if form.is_valid():
             # file is saved
@@ -199,7 +196,6 @@ def professor_index(request):
         raise PermissionDenied
     p_id = request.user.id
     if request.method == "POST":
-        print(request.POST)
         is_active = "set_active" in request.POST;
         for key, val in request.POST.items():
             if key.startswith("class_"):
@@ -389,7 +385,6 @@ def add_optional_field(request):
         post['select_options'] = ','.join(select_options)
         post['field_name'] = re.sub('[^A-Za-z0-9]+', '', field_text)
         post._mutable = mutable
-        print(post)
         form = AddOptionalFieldForm(post)
         if form.is_valid():
             # file is saved

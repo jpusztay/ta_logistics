@@ -124,7 +124,6 @@ class DataDefinitions():
         return data
 
 
-
     def getStudentDataForApplicantsView(self, class_id):
         applicants = ClassApplicants.objects.filter(class_id=class_id).select_related()
         main_data_fields = ['ubit_name', 'first_name', 'last_name', 'hiring_status', 'class_grade', 'gpa',]
