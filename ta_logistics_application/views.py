@@ -13,8 +13,8 @@ from django.core.mail import send_mail, EmailMessage
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm, ProfessorProfileForm
 from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields, Professors
 import ta_logistics_application.models
+#from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import login
-
 
 HIRE_REVIEW = 0
 HIRE_REJECT = 1
@@ -28,10 +28,8 @@ HIRE_DECLINE = 6
 ## Auth Stuff
 def custom_login(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect("/home/")
-    else:
-        return login(request)
-
+        return group_index(request)
+    return login(request)
 
 def check_faculty(user):
     return user.groups.filter(name="professors").exists()
@@ -45,7 +43,7 @@ def check_student(user):
 def group_index(request):
     if request.user.is_authenticated():
         if request.user.is_staff:
-            return HttpResponseRedirect("/admin/")
+            return HttpResponseRedirect("/utalize/admin/")
         if not request.user.groups.filter(name="professors").exists():
             request.user.groups.set([1])
         if request.user.groups.filter(name="professors").exists():

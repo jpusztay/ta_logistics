@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'ta_logistics.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'data_students'),
+        'NAME': '/home/developer/ta_logistics/data_students',
     }
 }
 
