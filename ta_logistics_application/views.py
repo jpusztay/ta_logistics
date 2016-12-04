@@ -59,7 +59,7 @@ def group_index(request):
 
 ################ Student Context ################
 
-@login_required()
+@login_required(login_url="login")
 #@user_passes_test(check_student)
 def student_index(request):
     if not check_student(request.user):
@@ -88,7 +88,7 @@ def student_index(request):
     return render(request, 'ta_logistics_application/student/student_index.html', context)
 
 
-@login_required()
+@login_required(login_url="login")
 #@user_passes_test(check_student)
 def student_profile(request):
     if not check_student(request.user):
@@ -106,7 +106,7 @@ def student_profile(request):
     return render(request, 'ta_logistics_application/student/profile.html', {'form': form})
 
 
-@login_required()
+@login_required(login_url="login")
 #@user_passes_test(check_student)
 def student_edit_profile(request):
     if not check_student(request.user):
@@ -124,7 +124,7 @@ def student_edit_profile(request):
     return render(request, 'ta_logistics_application/student/edit_profile.html', {'form': form})
 
 
-@login_required()
+@login_required(login_url="login")
 #@user_passes_test(check_student)
 def student_class_list(request):
     if not check_student(request.user):
@@ -141,7 +141,7 @@ def student_class_list(request):
 
 
 # Get s_id and c_id parts working
-@login_required()
+@login_required(login_url="login")
 #@user_passes_test(check_student)
 def student_application(request):# s_id):
     if not check_student(request.user):
@@ -164,7 +164,7 @@ def student_application(request):# s_id):
 
 ################ Professor Context ################
 
-@login_required()
+@login_required(login_url="login")
 #@user_passes_test(check_student)
 def professor_profile(request):
     """
