@@ -1,0 +1,21 @@
+#overrides {
+    background-color: #005bbb;
+    color: #DDDDDD;
+}
+
+#optional_field_check {
+    list-style-type: none;
+    padding-left: 2%;
+}
+
+#long_table {
+    overflow:auto;
+}
+
+td.details-control {
+    background: url('../images/expand.jpg') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('../images/details_close.png') no-repeat center center;
+}
