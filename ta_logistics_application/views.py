@@ -101,8 +101,8 @@ def student_profile(request):
         if form.is_valid():
             # file is saved
             form.save()
-            template = loader.get_template('ta_logistics_application/student/profile.html')
-            return HttpResponse(template.render())
+            #template = loader.get_template('ta_logistics_application/student/profile.html')
+            return student_index(request)
     else:
         form = StudentProfileForm()
     return render(request, 'ta_logistics_application/student/profile.html', {'form': form})
