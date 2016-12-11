@@ -81,6 +81,12 @@ class DataDefinitions():
         (5, 'Accepted Offer'),
         (6, 'Declined Offer'),
     )
+    SPRING_FALL = (
+        ('Spring', 'Spring'),
+        ('Fall', 'Fall'),
+        ('Both', 'Both'),
+
+    )
 
     STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
                          "JOIN ta_logistics_application_students as students on (applicants.student_id = students.id) "+\
@@ -160,8 +166,8 @@ class DataDefinitions():
 
 class Students(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
-    ubit_name = models.CharField(max_length=10)
-    person_number = models.CharField(max_length=8)
+    ubit_name = models.CharField(max_length=10, unique=True)
+    person_number = models.CharField(max_length=8, unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     gpa = models.FloatField(choices=DataDefinitions.GPA_CHOICES)
@@ -195,11 +201,12 @@ class ClassApplicants(models.Model):
     number_credits = models.IntegerField(choices=DataDefinitions.NUM_CREDITS_CHOICES, default=0)
     is_registered_for_credit = models.BooleanField(default=False)
     pending_offer = models.BooleanField(default=False)
+    payroll_ready = models.BooleanField(default=False)
 
 
 class Professors(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
-    ubit_name = models.CharField(max_length=10)
+    ubit_name = models.CharField(max_length=10, unique=True)
     first_name = models.CharField(max_length=15)
     last_name = models.CharField(max_length=15)
 
@@ -215,8 +222,10 @@ class ApplicationFields(models.Model):
 
 
 class PayrollInfo(models.Model):
+    student_id = models.IntegerField()
+    class_id = models.IntegerField()
     has_ssn = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
-    been_ub_employee = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    been_on_ub_payroll = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
     been_student_assistant = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
-    other_on_campus_job = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
-    fall_and_spring = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    working_on_campus_while_being_ta = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    fall_and_spring = models.TextField(default=0, choices=DataDefinitions.SPRING_FALL)

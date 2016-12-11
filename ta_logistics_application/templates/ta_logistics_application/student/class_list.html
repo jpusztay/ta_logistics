@@ -10,6 +10,9 @@
 {% if class_list %}
     <div class = "row">
         <p> Select a class from the dropdown menu and then click the next button to apply for that class.</p>
+        {% if error_message %}
+            <p style="color: red">{{ error_message }}</p>
+        {% endif %}
         <form method="post" id="button_form">
             {% csrf_token %}
             <div class="form-group">
