@@ -12,7 +12,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail, EmailMessage
 from ta_logistics_application.forms import StudentProfileForm, CreateClassForm, OptionalFieldsForm, ApplicationForm, AddOptionalFieldForm, ClassListForm, ProfessorProfileForm, PayrollForm
-from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields, Professors
+from ta_logistics_application.models import Classes, ClassApplicants, DataDefinitions, Students, ApplicationFields, Professors, PayrollInfo
 import ta_logistics_application.models
 from django.contrib.auth.views import login
 from django.conf import settings
@@ -43,13 +43,18 @@ def check_student(user):
     return user.groups.filter(name="students").exists()
 
 
+def check_payroll(user):
+    return user.groups.filter(name="payroll").exists()
+
+
 @login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
         if request.user.is_staff:
             return HttpResponseRedirect("/admin/")
         if not request.user.groups.filter(name="professors").exists():
-            request.user.groups.set([1])
+            if not request.user.groups.filter(name="payroll").exists():
+                request.user.groups.set([1])
         if request.user.groups.filter(name="professors").exists():
             if not Professors.objects.filter(pk=request.user.id).exists():
                 return professor_profile(request)
@@ -59,7 +64,27 @@ def group_index(request):
                 return student_index(request)
             else:
                 return student_profile(request)
+        elif request.user.groups.filter(name="payroll").exists():
+            return payroll_registration(request)
 
+
+def payroll_registration(request):
+    if not check_payroll(request.user):
+        raise PermissionDenied
+    if request.method == "POST":
+        for key, val in request.POST.items():
+            if key.startswith("payroll_id_"):
+                payroll_id = key.split("_")[-1]
+                entry = PayrollInfo.objects.get(id=payroll_id)
+                entry.is_on_payroll = True
+                entry.save()
+    data_defs = DataDefinitions()
+    payroll_data = data_defs.getPayrollData()
+    print(payroll_data)
+    context = {
+        'payroll_data': payroll_data,
+    }
+    return render(request, 'ta_logistics_application/admin/payroll_registration.html', context)
 
 ################ Student Context ################
 
@@ -73,16 +98,15 @@ def student_index(request):
         for key, val in request.POST.items():
             if key.startswith("class_"):
                 curr_class = ClassApplicants.objects.get(student_id=request.user.id, class_id=key.split('_')[-1])
-                student_id = request.user.id
-                student_data = Students.objects.get(id=student_id)
-                class_data = Classes.objects.get(id=curr_class.class_id)
-                professor_id = class_data.professor_id
-                professor_email = Professors.objects.get(id=professor_id).ubit_name
-                professor_email += '@buffalo.edu'
                 if accept_offer:
-                    return redirect(payroll_info(request, curr_class))
+                    return redirect("/student/payroll_info?class_id=" + str(curr_class.class_id))
                 else:
-                    curr_class.pending_offer = False
+                    student_id = request.user.id
+                    student_data = Students.objects.get(id=student_id)
+                    class_data = Classes.objects.get(id=curr_class.class_id)
+                    professor_id = class_data.professor_id
+                    professor_email = Professors.objects.get(id=professor_id).ubit_name
+                    professor_email += '@buffalo.edu'
                     subject = "A Student Declined your Offer"
                     body = body = "The student " + student_data.first_name + " " + student_data.last_name + " (" \
                            + student_data.ubit_name + ") Has declined your offer for a TA position for " \
@@ -103,17 +127,28 @@ def student_index(request):
     applied_classes = data_defs.getStudentAppliedClasses(student_id=request.user.id)
     pending_offer = False
     for classes in applied_classes:
-        if classes['pending_offer']:
+        if classes['hiring_status_id'] == HIRE_OFFERED:
             pending_offer = True
+            break
     context = {
         'applied_classes': applied_classes,
-        'pending_offer': pending_offer
+        'pending_offer': pending_offer,
+        'hire_offered': HIRE_OFFERED
     }
     return render(request, 'ta_logistics_application/student/student_index.html', context)
 
 
-def payroll_info(request, application):
-    print("FUCK")
+def payroll_info(request):
+    if not check_student(request.user):
+        raise PermissionDenied
+    class_id = int(request.GET.urlencode().split('=')[-1])
+    print(str(class_id) + " " + str(request.user.id))
+    if not ClassApplicants.objects.filter(class_id=class_id, student_id=request.user.id).exists():
+        raise PermissionDenied
+    application = ClassApplicants.objects.get(class_id=class_id, student_id=request.user.id)
+    data_defs = DataDefinitions()
+    if application.hiring_status_id != HIRE_OFFERED:
+        raise PermissionDenied
     if request.method == 'POST':
         request.POST = request.POST.copy()
         request.POST['student_id'] = request.user.id
@@ -122,19 +157,29 @@ def payroll_info(request, application):
         if form.is_valid():
             student_data = Students.objects.get(id=request.user.id)
             class_data = Classes.objects.get(id=application.class_id)
+            professor_email = Professors.objects.get(id=class_data.professor_id).ubit_name
+            professor_email += '@buffalo.edu'
             subject = "A Student Accepted your Offer!"
             body = "The student " + student_data.first_name + " " + student_data.last_name + " (" \
                    + student_data.ubit_name + ") Has accepted your offer for a TA position for " \
                    + class_data.class_listing_id + "."
             application.hiring_status_id = HIRE_ACCEPT
-            application.payroll_ready = True
             application.save()
             form.save()
-            template = loader.get_template('ta_logistics_application/student/student_index.html')
-            return HttpResponse(template.render())
+            email_message = EmailMessage(
+                subject,
+                body,
+                'cse442.talogistics@gmail.com',
+                [professor_email],
+            )
+            try:
+                email_message.send(fail_silently=False)
+            except:
+                print("Email error")
+            return redirect(student_index)
     form = PayrollForm()
     context = {
-        'form': form
+        'form': form,
     }
     return render(request, 'ta_logistics_application/student/payroll_info.html', context)
 
@@ -354,7 +399,6 @@ def professor_class_applicants(request):
                     body = "You've been selected for an interview!"
                 elif 'hired' in request_list:
                     application_entry.hiring_status_id = HIRE_OFFERED
-                    application_entry.pending_offer = True
                     subject = "Congratulations, You've been given an offer!"
                     body = "Congratulations, You've been given an offer!"
                 elif 'wait_listed' in request_list:

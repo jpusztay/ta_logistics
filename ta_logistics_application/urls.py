@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^home/', views.group_index, name='home'),
 
-    #Student
+    # Student
     url(r'^student/profile/$', views.student_profile, name='student_profile'),
     url(r'^student/edit_profile/$', views.student_edit_profile, name='student_edit_profile'),
     url(r'^student/$', views.student_index, name='student_index'),
@@ -25,5 +25,10 @@ urlpatterns = [
     url(r'^professor/edit_optional_field', views.edit_optional_field, name='edit_optional_field'),
     url(r'^professor/view_optional_fields', views.view_optional_fields, name='view_optional_fields'),
     url(r'^professor/create_class_error', views.create_class_error, name='create_class_error'),
+
+
+    # Admin Pages
+url(r'^admin/payroll_registration', views.payroll_registration, name='payroll_registration'),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
