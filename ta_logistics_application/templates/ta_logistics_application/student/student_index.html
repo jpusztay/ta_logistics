@@ -28,13 +28,13 @@
                         </thead>
                         <tbody>
                             {% for class in applied_classes %}
-                                {% if class.pending_offer %}
+                                {% ifequal class.hiring_status_id hire_offered %}
                                     <tr>
                                         <td><input name="class_{{ class.id }}" value="" class="select-class" type="checkbox"/></td>
                                         <td>{{ class.class_id}}</td>
                                         <td>{{ class.application_status}}</td>
                                     </tr>
-                                {% endif %}
+                                {% endifequal %}
                             {% endfor %}
                         </tbody>
                     </table>
@@ -57,10 +57,12 @@
                 </thead>
                 <tbody>
                     {% for class in applied_classes %}
+                        {% ifnotequal class.hiring_status_id hire_offered %}
                         <tr>
                             <td>{{ class.class_id}}</td>
                             <td>{{ class.application_status}}</td>
                         </tr>
+                        {% endifnotequal %}
                     {% endfor %}
                 </tbody>
             </table>

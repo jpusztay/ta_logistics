@@ -12,8 +12,8 @@ class DataDefinitions():
         (0, 'Activate Later')
     )
     BOOL_YES_NO = (
-        (1, 'Yes'),
-        (0, 'No')
+        (True, 'Yes'),
+        (False, 'No')
     )
     GPA_CHOICES = (
         (4.0, '4.0'),
@@ -81,6 +81,12 @@ class DataDefinitions():
         (5, 'Accepted Offer'),
         (6, 'Declined Offer'),
     )
+    SPRING_FALL = (
+        ('Spring', 'Spring'),
+        ('Fall', 'Fall'),
+        ('Both', 'Both'),
+
+    )
 
     STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
                          "JOIN ta_logistics_application_students as students on (applicants.student_id = students.id) "+\
@@ -106,6 +112,30 @@ class DataDefinitions():
             ret.append((i.id, i.field_text))
         return tuple(ret)
 
+    def getPayrollData(self):
+        payroll_model_data = PayrollInfo.objects.filter(is_on_payroll=False)
+        data = []
+        for entry in payroll_model_data:
+            payroll_data = OrderedDict()
+            student_data = Students.objects.get(id=entry.student_id)
+            class_data = Classes.objects.get(id=entry.class_id)
+            professor_data = Professors.objects.get(id=class_data.professor_id)
+            payroll_data['class_listing_id'] = class_data.class_listing_id
+            payroll_data['professor_data'] = professor_data.first_name + " " + professor_data.last_name + " (" + professor_data.ubit_name + ")"
+            payroll_data['student_data'] = student_data.first_name + " " + student_data.last_name + " (" + student_data.ubit_name + ")"
+            payroll_data['student_person_number'] = student_data.person_number
+
+            payroll_data['fall_spring_or_both'] = entry.fall_and_spring
+            payroll_data['has_social_security_number'] = entry.has_ssn
+            payroll_data['been_cse_ta'] = entry.been_student_assistant
+            payroll_data['ever_been_on_ub_payroll'] = entry.been_on_ub_payroll
+            payroll_data['working_on_campus_while_being_ta'] = entry.working_on_campus_while_being_ta
+            payroll_data['id'] = entry.id
+
+            data.append(payroll_data)
+        return data
+
+
     def getStudentAppliedClasses(self, student_id):
         applications = ClassApplicants.objects.filter(student_id=student_id)
         data = []
@@ -114,7 +144,7 @@ class DataDefinitions():
             curr_class = Classes.objects.get(id=application.class_id)
             app_data['class_id'] = curr_class.class_listing_id
             app_data['id'] = curr_class.id
-            app_data['pending_offer'] = application.pending_offer
+            app_data['hiring_status_id'] = application.hiring_status_id
             for choice_tuple in self.APPLICATION_STATUS:
                 choice_id, choice_name = choice_tuple
                 if choice_id == application.hiring_status_id:
@@ -160,8 +190,8 @@ class DataDefinitions():
 
 class Students(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
-    ubit_name = models.CharField(max_length=10)
-    person_number = models.CharField(max_length=8)
+    ubit_name = models.CharField(max_length=10, unique=True)
+    person_number = models.CharField(max_length=8, unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     gpa = models.FloatField(choices=DataDefinitions.GPA_CHOICES)
@@ -194,12 +224,11 @@ class ClassApplicants(models.Model):
     optional_fields = models.CharField(max_length=5000, validators=[validate_optional_field_json], default="")
     number_credits = models.IntegerField(choices=DataDefinitions.NUM_CREDITS_CHOICES, default=0)
     is_registered_for_credit = models.BooleanField(default=False)
-    pending_offer = models.BooleanField(default=False)
 
 
 class Professors(models.Model):
     id = models.IntegerField(primary_key=True, unique=True)
-    ubit_name = models.CharField(max_length=10)
+    ubit_name = models.CharField(max_length=10, unique=True)
     first_name = models.CharField(max_length=15)
     last_name = models.CharField(max_length=15)
 
@@ -215,8 +244,11 @@ class ApplicationFields(models.Model):
 
 
 class PayrollInfo(models.Model):
-    has_ssn = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
-    been_ub_employee = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
-    been_student_assistant = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
-    other_on_campus_job = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
-    fall_and_spring = models.BooleanField(default=0, choices=DataDefinitions.BOOL_YES_NO)
+    student_id = models.IntegerField()
+    class_id = models.IntegerField()
+    has_ssn = models.BooleanField(default=False, choices=DataDefinitions.BOOL_YES_NO)
+    been_on_ub_payroll = models.BooleanField(default=False, choices=DataDefinitions.BOOL_YES_NO)
+    been_student_assistant = models.BooleanField(default=False, choices=DataDefinitions.BOOL_YES_NO)
+    working_on_campus_while_being_ta = models.BooleanField(default=False, choices=DataDefinitions.BOOL_YES_NO)
+    fall_and_spring = models.TextField(default=False, choices=DataDefinitions.SPRING_FALL)
+    is_on_payroll = models.BooleanField(default=False)
