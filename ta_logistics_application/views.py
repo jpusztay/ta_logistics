@@ -557,8 +557,14 @@ def register_for_credit(request):
                 if ubit_name not in error_students:
                     students.append(ubit_name)
                 application_entry.save()
+        main_student_data = DataDefinitions().getStudentDataForRegistration()
+        if main_student_data:
+            num_cols = len(main_student_data[0])
+        else:
+            num_cols = 0
         context = {
-            'students': students,
+            'students': main_student_data,
+            'num_cols': num_cols,
             'error_students': error_students,
         }
         return render(request, 'ta_logistics_application/staffer/cred_registration.html', context)
