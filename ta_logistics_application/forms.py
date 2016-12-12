@@ -223,3 +223,20 @@ class ProfessorProfileForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+'''
+class CreditRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = ClassApplicants
+        select_optional_fields = forms.MultipleChoiceField(
+            choices=model,
+            widget=forms.CheckboxSelectMultiple()
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(CreditRegistrationForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+'''

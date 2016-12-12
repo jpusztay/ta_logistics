@@ -86,6 +86,10 @@ class DataDefinitions():
                          "JOIN ta_logistics_application_students as students on (applicants.student_id = students.id) "+\
                          "where applicants.class_id = %d"
 
+    ALL_STUDENT_DATA_QUERY = "select * from ta_logistics_application_classapplicants AS applicants "+\
+                             "JOIN ta_logistics_application_students as students on (applicants.student_id = students.id) "+\
+                             "where applicants.hiring_status_id = %d"
+
     INT_FIELD = "INT"
     FLOAT_FIELD = "FLOAT"
     TEXT_FIELD = "TEXT"
@@ -157,6 +161,24 @@ class DataDefinitions():
             main_student_data[-1]['secondary_student_data'] = secondary_student_data
 
         return main_student_data
+
+    def getStudentDataForRegistration(self):
+        raw_data = ClassApplicants.objects.raw(self.ALL_STUDENT_DATA_QUERY%5)
+        unreg_hires = []
+        fields = ['ubit_name', 'first_name', 'last_name', 'class_id', 'number_credits', 'is_registered_for_credit']
+        for student in raw_data:
+            unreg_hires.append(OrderedDict())
+            if student.hiring_status_id == 5 and student.is_registered_for_credit == 0:
+                for field in fields:
+                    if field == 'hiring_status':
+                        for tup in self.HIRING_STATUS:
+                            id, name = tup
+                            if id == student.hiring_status_id:
+                                unreg_hires[-1][field] = name
+                                break
+                    else:
+                        unreg_hires[-1][field] = getattr(student, field)
+        return unreg_hires
 
 
 class Students(models.Model):

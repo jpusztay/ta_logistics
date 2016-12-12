@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^professor/edit_optional_field', views.edit_optional_field, name='edit_optional_field'),
     url(r'^professor/view_optional_fields', views.view_optional_fields, name='view_optional_fields'),
 
+    # Staff context
+    url(r'^creditregistration/$', views.register_for_credit, name='register_for_credit')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

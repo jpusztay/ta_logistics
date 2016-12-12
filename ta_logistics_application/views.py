@@ -41,6 +41,10 @@ def check_student(user):
     return user.groups.filter(name="students").exists()
 
 
+def check_advise(user):
+    pass
+
+
 @login_required(login_url='login')
 def group_index(request):
     if request.user.is_authenticated():
@@ -396,3 +400,40 @@ def add_optional_field(request):
 
     form = AddOptionalFieldForm()
     return render(request, 'ta_logistics_application/professor/add_optional_field.html', {'form': form})
+
+
+def register_for_credit(request):
+    if request.method == 'POST':
+        error_students = []
+        students = []
+        for key, val in request.POST.items():
+            if key.startswith("ubit"):
+                ubit_name = key.split("_")[-1]
+                student_id = Students.objects.get(ubit_name=ubit_name).id
+                application_entry = ClassApplicants.objects.get(id=student_id)
+                request_list = list(request.POST.keys())
+                if 'enrolled' in request_list:
+                    application_entry.is_registered_for_credit = True
+                else:
+                    break
+                if ubit_name not in error_students:
+                    students.append(ubit_name)
+                application_entry.save()
+        context = {
+            'students': students,
+            'error_students': error_students,
+        }
+        return render(request, 'ta_logistics_application/staffer/cred_registration.html', context)
+
+    data_defs = DataDefinitions()
+    main_student_data = data_defs.getStudentDataForRegistration()
+    if main_student_data:
+        num_cols = len(main_student_data[0])
+    else:
+        num_cols = 0
+    context = {
+        'main_student_data': main_student_data,
+        'num_cols': num_cols,
+    }
+
+    return render(request, 'ta_logistics_application/staffer/cred_registration.html', context)
