@@ -1,0 +1,86 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="/static/js/professor_class_applicants.js"></script>
+{% endblock %}
+
+{% block content %}
+    <!-- WE NEED TO PUT THIS IN MAIN.JS  SOMEHOW!!!!!-->
+    <script type="text/javascript" language="javascript" class="init">
+    $( document ).ready( function () {
+
+        var table = $('#professor_applicants_table').DataTable({
+            paging: false,
+            info: false,
+            searching: false,
+            order: [[ 2, "desc" ]],
+            aoColumnDefs: [
+                {
+                    'bSortable': false,
+                    'aTargets' : [ 0, 1 ]
+                }
+            ],
+            columnDefs: [
+                { width: 100, targets: 0 }
+            ],
+
+        });
+    });
+
+    </script>
+    <div class="page-header">
+        <div class="jumbotron">
+            <h2>Unregistered (Hired!) TAs</h2>
+        </div>
+        <div>
+            {% if main_student_data %}
+            <form id="button_form" method="post">
+                {% csrf_token %}
+                <div id="long_table">
+                    <table class="table display" id="professor_applicants_table">
+                        <thead>
+                            <tr role="row">
+                                <th class="details-control">+/-</th>
+                                <th><input name="select_all" value="1" id="select-all" type="checkbox" /></th>
+                                {% for key, value in main_student_data.0.items %}
+                                    {% ifnotequal key "secondary_student_data" %}
+                                        <th>{{ key }}</th>
+                                    {% else %}
+                                        {% for k, v in value.items %}
+                                           <th style="display:none;">{{ k }}</th>
+                                        {% endfor %}
+                                    {% endifnotequal %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for applicant in main_student_data %}
+                                <tr>
+                                    <td class=" details-control"></td>
+                                    <td><input name="ubit_{{ applicant.ubit_name }}" value="{{ applicant.class_id }}" class="select-applicant" type="checkbox" /></td>
+                                    {% for key, value in applicant.items %}
+                                        {% ifnotequal key "secondary_student_data" %}
+                                            <td>{{ value }}</td>
+                                        {% else %}
+                                            {% for k, v in value.items %}
+                                                <td style="display:none;">{{ v }}</td>
+                                            {% endfor %}
+                                        {% endifnotequal %}
+                                    {% endfor %}
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit" form="button_form" name="enrolled">Selected have been enrolled for credit</button>
+                </div>
+            </form>
+            {% else %}
+                <p>All Done!</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
