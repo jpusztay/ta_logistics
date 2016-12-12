@@ -41,7 +41,6 @@
                     <table class="table display" id="professor_applicants_table">
                         <thead>
                             <tr role="row">
-                                <th class="details-control">+/-</th>
                                 <th><input name="select_all" value="1" id="select-all" type="checkbox" /></th>
                                 {% for key, value in main_student_data.0.items %}
                                     {% ifnotequal key "secondary_student_data" %}
@@ -57,7 +56,6 @@
                         <tbody>
                             {% for applicant in main_student_data %}
                                 <tr>
-                                    <td class=" details-control"></td>
                                     <td><input name="ubit_{{ applicant.ubit_name }}" value="{{ applicant.class_id }}" class="select-applicant" type="checkbox" /></td>
                                     {% for key, value in applicant.items %}
                                         {% ifnotequal key "secondary_student_data" %}
