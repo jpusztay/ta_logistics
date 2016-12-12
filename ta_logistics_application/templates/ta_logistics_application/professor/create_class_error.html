@@ -1,0 +1,15 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="page-header">
+        <div class="jumbotron">
+            <h2 class="center-block">A Class with this Listing and ID has already been created</h2>
+        </div>
+    </div>
+    <script>
+        {% if not user.is_authenticated %}
+            $("ul.nav.navbar-nav.navbar-right").css("display","none");
+        {% endif %}
+    </script>
+
+{% endblock %}

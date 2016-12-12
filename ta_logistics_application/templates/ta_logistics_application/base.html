@@ -40,10 +40,14 @@
 
                         <ul class="nav navbar-nav" id="overrides">
                             <li class="dropdown" id="overrides">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="overrides">Options <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu" id="overrides">
-                                    <li ><a href="{% url 'view_optional_fields' %}" id="overrides">View/Edit Optional Fields</a></li>
-                                </ul>
+                            {% for group in user.groups.all %}
+                                {% ifequal group.name 'professors' %}
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="overrides">Options <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" role="menu" id="overrides">
+                                        <li ><a href="{% url 'view_optional_fields' %}" id="overrides">View/Edit Optional Fields</a></li>
+                                    </ul>
+                                {% endifequal %}
+                            {% endfor %}
                             </li>
                         </ul>
 
@@ -51,9 +55,15 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" id="overrides">{% if user.is_authenticated %}{{user.get_username}}{% endif %}<span class="caret"></span></a>
                                 <ul class="dropdown-menu" id="overrides">
-                                    <li><a href="{% url 'student_profile' %}" id="overrides">Profile</a></li>
+                                    {% for group in user.groups.all %}
+                                        {% ifequal group.name 'students' %}
+                                        <li>
+                                            <a href="{% url 'student_edit_profile' %}" id="overrides">Edit Profile</a>
+                                        </li>
+                                        {% endifequal %}
+                                    {% endfor %}
                                     <li>
-                                        <a href="/logout">Logout</a>
+                                        <a href="/logout" id="overrides">Logout</a>
                                     </li>
                                 </ul>
                             </li>

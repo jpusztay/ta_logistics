@@ -1,0 +1,19 @@
+{% extends 'ta_logistics_application/base.html' %}
+
+{% block content %}
+    <div class="page-header">
+        <div class="jumbotron">
+            <h2>Payroll Info</h2>
+        </div>
+
+        <div class="footnotes">
+            <form method="post" action ="" enctype="multipart/form-data">
+                <div class="form-group">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
