@@ -44,10 +44,12 @@
                                 <th><input name="select_all" value="1" id="select-all" type="checkbox" /></th>
                                 {% for key, value in main_student_data.0.items %}
                                     {% ifnotequal key "secondary_student_data" %}
-                                        <th>{{ key }}</th>
+                                        {% ifnotequal key "class_id"%}
+                                            <th>{{ key }}</th>
+                                        {% endifnotequal %}
                                     {% else %}
                                         {% for k, v in value.items %}
-                                           <th style="display:none;">{{ k }}</th>
+                                                <th style="display:none;">{{ k }}</th>
                                         {% endfor %}
                                     {% endifnotequal %}
                                 {% endfor %}
@@ -59,7 +61,9 @@
                                     <td><input name="ubit_{{ applicant.ubit_name }}" value="{{ applicant.class_id }}" class="select-applicant" type="checkbox" /></td>
                                     {% for key, value in applicant.items %}
                                         {% ifnotequal key "secondary_student_data" %}
-                                            <td>{{ value }}</td>
+                                            {% ifnotequal key "class_id" %}
+                                                <td>{{ value }}</td>
+                                            {% endifnotequal %}
                                         {% else %}
                                             {% for k, v in value.items %}
                                                 <td style="display:none;">{{ v }}</td>
