@@ -1,23 +1,16 @@
 {% extends 'ta_logistics_application/base.html' %}
 
-{% block js %}
-    {{ block.super }}
-    <script type="text/javascript" src="/static/js/student_edit_profile.js"></script>
-{% endblock %}
-
 {% block content %}
     <div class="page-header">
         <div class="jumbotron">
-            <h2>Student Profile</h2>
+            <h2>Payroll Info</h2>
         </div>
 
         <div class="footnotes">
             <form method="post" action ="" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label for="exampleInputFile">Resume</label>
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <small id="fileHelp" class="form-text text-muted">Please enter a PDF or a docx file</small>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
