@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 import json
 from django import forms
-from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields, Professors
+from .models import Students, Classes, ClassApplicants, DataDefinitions, ApplicationFields, Professors, PayrollInfo
 from registration.forms import RegistrationForm
 
 
@@ -24,8 +24,6 @@ class ClassListForm(forms.Form):
     """
 
     class_list = forms.ModelChoiceField(queryset=Classes.objects.values())
-    print(class_list)
-
 
 
 class StudentProfileForm(forms.ModelForm):
@@ -40,6 +38,7 @@ class StudentProfileForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'placeholder': 'Enter Last Name'}),
             'teaching_experience': forms.Textarea(attrs={'placeholder': 'Enter a Brief Summary of Your Teaching Experience'}),
             'gpa': forms.Select(attrs={'placeholder': 'Select GPA'}),
+            'resume': forms.FileInput(),
             'id': forms.HiddenInput(),
         }
 
@@ -49,11 +48,6 @@ class StudentProfileForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
-
-
-class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50)
-    file = forms.FileField()
 
 
 class ApplicationForm(forms.Form):
@@ -132,6 +126,36 @@ class ApplicationForm(forms.Form):
         application.save()
 
 
+class PayrollForm(forms.ModelForm):
+    class Meta:
+        data_defs = DataDefinitions()
+        model = PayrollInfo
+        fields = ['student_id', 'class_id', 'has_ssn', 'been_on_ub_payroll', 'been_student_assistant', 'working_on_campus_while_being_ta', 'fall_and_spring']
+        widgets = {
+            'student_id': forms.HiddenInput(),
+            'class_id': forms.HiddenInput(),
+            'has_ssn': forms.Select(choices=data_defs.BOOL_YES_NO),
+            'been_on_ub_payroll': forms.Select(choices=data_defs.BOOL_YES_NO),
+            'been_student_assistant': forms.Select(choices=data_defs.BOOL_YES_NO),
+            'working_on_campus_while_being_ta': forms.Select(choices=data_defs.BOOL_YES_NO),
+            'fall_and_spring': forms.Select(choices=data_defs.SPRING_FALL),
+        }
+        labels = {
+            'has_ssn': 'Do You Have a Social Security Number?',
+            'been_on_ub_payroll': 'Have You Been on UB Payroll before?',
+            'been_student_assistant': 'Have You Been a Student Assistant for the CSE Dept.?',
+            'working_on_campus_while_being_ta': 'Will You Be Working Another Campus Job While TAing?',
+            'fall_and_spring': 'Will You Be Working Fall, Spring, or Both?',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(PayrollForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+
 ################ Professor Context ################
 
 class CreateClassForm(forms.ModelForm):
@@ -175,6 +199,8 @@ class OptionalFieldsForm(forms.Form):
                 'class': 'optional_field_check',
                 'id': 'optional_field_check'
             })
+    def __init__(self, *args, **kwargs):
+        super(OptionalFieldsForm, self).__init__(*args, **kwargs)
 
 
 class AddOptionalFieldForm(forms.ModelForm):
