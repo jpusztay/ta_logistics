@@ -196,8 +196,8 @@ class DataDefinitions():
         unreg_hires = []
         fields = ['ubit_name', 'first_name', 'last_name', 'class_id', 'number_credits', 'is_registered_for_credit']
         for student in raw_data:
-            unreg_hires.append(OrderedDict())
             if student.hiring_status_id == 5 and student.is_registered_for_credit == 0:
+                unreg_hires.append(OrderedDict())
                 for field in fields:
                     if field == 'hiring_status':
                         for tup in self.HIRING_STATUS:
