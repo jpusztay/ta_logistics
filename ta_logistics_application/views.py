@@ -44,7 +44,7 @@ def check_student(user):
 
 
 def check_advise(user):
-    pass
+    return user.groups.filter(name="advise").exists()
 
 
 def check_payroll(user):
@@ -58,7 +58,7 @@ def group_index(request):
         if request.user.is_staff:
             return HttpResponseRedirect("/admin/")
         if not request.user.groups.filter(name="professors").exists():
-            if not request.user.groups.filter(name="payroll").exists():
+            if not request.user.groups.filter(name="payroll").exists() and not request.user.groups.filter(name="advise").exists():
                 request.user.groups.set([1])
         if request.user.groups.filter(name="professors").exists():
             if not Professors.objects.filter(pk=request.user.id).exists():
@@ -71,6 +71,8 @@ def group_index(request):
                 return student_profile(request)
         elif request.user.groups.filter(name="payroll").exists():
             return payroll_registration(request)
+        elif request.user.groups.filter(name="advise").exists():
+            return register_for_credit(request)
 
 
 def payroll_registration(request):
@@ -535,17 +537,21 @@ def add_optional_field(request):
 
 
 def register_for_credit(request):
+    if not check_advise(request.user):
+        raise PermissionDenied
     if request.method == 'POST':
         error_students = []
         students = []
+        print(request.POST)
         for key, val in request.POST.items():
             if key.startswith("ubit"):
                 ubit_name = key.split("_")[-1]
                 student_id = Students.objects.get(ubit_name=ubit_name).id
-                application_entry = ClassApplicants.objects.get(id=student_id)
+                class_id = val
+                application_entry = ClassApplicants.objects.get(student_id=student_id, class_id=class_id)
                 request_list = list(request.POST.keys())
                 if 'enrolled' in request_list:
-                    application_entry.is_registered_for_credit = True
+                    application_entry.is_registered_for_credit = 1
                 else:
                     break
                 if ubit_name not in error_students:
